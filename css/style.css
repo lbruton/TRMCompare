@@ -36,6 +36,8 @@ header h1 { font-size: 1.6rem; color: var(--text-primary); font-weight: 700; let
 .step-card strong { color: var(--accent); font-size: 0.95rem; display: block; margin-bottom: 0.25rem; }
 .step-card p { color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4; margin: 0; }
 .step-card code { display: block; background: var(--bg-primary); padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.78rem; color: var(--accent); margin-top: 0.2rem; }
+.step-card code.optional { color: #e2b44d; opacity: 0.75; }
+.optional-note { display: block; font-size: 0.72rem; color: #e2b44d; opacity: 0.6; margin-top: 0.35rem; font-style: italic; }
 
 /* Main content */
 main { padding: 1.5rem 2rem; }
