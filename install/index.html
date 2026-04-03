@@ -5,30 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TRMCompare — Self-Host</title>
   <meta name="description" content="Run TRMCompare locally. Multiple install methods: Python, download, or bookmark.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;600;700;800;900&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <style>
     :root {
       --bg-primary: #1a1a2e;
       --bg-secondary: #16213e;
       --bg-card: #0f3460;
+      --bg-deep: #16213e;
       --text-primary: #e0e0e0;
       --text-secondary: #a0a0a0;
+      --text-muted: #a0a0a0;
       --accent: #00b4d8;
+      --accent-hover: #0096b7;
       --border: #2a2a4a;
+      --old-switch: #4a4e5c;
+      --migration-arrow: #f0b429;
+      --status-ok: #28a745;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; }
 
-    header { background: var(--bg-secondary); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-    .header-left { display: flex; align-items: baseline; gap: 1rem; }
-    header h1 { font-size: 1.6rem; color: var(--text-primary); font-weight: 700; }
+    header { background: var(--bg-deep); padding: 0.75rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+    .header-left { display: flex; align-items: center; gap: 0.75rem; }
+    .header-logo { width: 28px; height: 28px; flex-shrink: 0; }
+    .header-brand { display: flex; align-items: baseline; gap: 0.6rem; }
+    header h1 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 900; color: var(--text-primary); letter-spacing: 2px; line-height: 1; }
     header h1 span { color: var(--accent); }
-    .header-tagline { font-size: 0.85rem; color: var(--text-secondary); }
+    .header-tagline { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
     .header-nav { display: flex; gap: 1rem; }
     .header-nav a { color: var(--accent); text-decoration: none; font-size: 0.9rem; padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--accent); transition: all 0.2s; }
     .header-nav a:hover { background: var(--accent); color: #fff; }
 
     .container { max-width: 760px; margin: 0 auto; padding: 2rem; }
-    h2 { font-size: 1.8rem; margin-bottom: 0.5rem; text-align: center; }
+    h2 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center; letter-spacing: -0.02em; }
     h2 span { color: var(--accent); }
     .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1rem; }
 
@@ -38,8 +50,8 @@
     .method-badge-alt { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border); }
     .method h3 { font-size: 1.15rem; }
     .method p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem; }
-    .method pre { background: var(--bg-primary); padding: 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--accent); overflow-x: auto; margin-bottom: 0.75rem; font-family: 'Courier New', monospace; }
-    .method code { background: var(--bg-primary); padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.85rem; font-family: 'Courier New', monospace; }
+    .method pre { background: var(--bg-primary); padding: 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--accent); overflow-x: auto; margin-bottom: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+    .method code { background: var(--bg-primary); padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
     .method ol, .method ul { color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.5rem; margin-bottom: 0.75rem; }
     .method li { margin-bottom: 0.4rem; }
     .method a { color: var(--accent); }
@@ -48,7 +60,7 @@
     .bookmark-section h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
     .bookmark-section p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
     .bookmark-btn { display: inline-block; background: var(--accent); color: #fff; padding: 0.6rem 1.5rem; border-radius: 6px; font-weight: 600; text-decoration: none; transition: background 0.2s; }
-    .bookmark-btn:hover { background: #0096b7; }
+    .bookmark-btn:hover { background: var(--accent-hover); }
 
     .note { background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.2); border-radius: 6px; padding: 1rem; margin-top: 1.5rem; }
     .note p { color: var(--text-secondary); font-size: 0.85rem; margin: 0; }
@@ -61,8 +73,27 @@
 <body>
   <header>
     <div class="header-left">
-      <h1>TRM<span>Compare</span></h1>
-      <span class="header-tagline">Self-Host Guide</span>
+      <svg class="header-logo" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+        <rect x="1" y="2" width="26" height="9" rx="1.5" stroke="var(--old-switch)" stroke-width="1.8"/>
+        <rect x="4" y="4.5" width="3" height="4.5" rx="0.4" fill="var(--old-switch)" opacity="0.25"/>
+        <rect x="8.5" y="4.5" width="3" height="4.5" rx="0.4" fill="var(--old-switch)" opacity="0.25"/>
+        <rect x="13" y="4.5" width="3" height="4.5" rx="0.4" fill="var(--old-switch)" opacity="0.25"/>
+        <rect x="17.5" y="4.5" width="3" height="4.5" rx="0.4" fill="var(--old-switch)" opacity="0.25"/>
+        <rect x="22" y="4.5" width="3" height="4.5" rx="0.4" fill="var(--old-switch)" opacity="0.25"/>
+        <rect x="10.5" y="13" width="7" height="2" rx="1" fill="var(--migration-arrow)"/>
+        <path d="M14 15v3m-2-1.2l2 1.5 2-1.5" stroke="var(--migration-arrow)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="1" y="21" width="26" height="9" rx="1.5" stroke="var(--accent)" stroke-width="1.8"/>
+        <rect x="4" y="23.5" width="3" height="4.5" rx="0.4" fill="var(--accent)" opacity="0.4"/>
+        <rect x="8.5" y="23.5" width="3" height="4.5" rx="0.4" fill="var(--accent)" opacity="0.4"/>
+        <rect x="13" y="23.5" width="3" height="4.5" rx="0.4" fill="var(--accent)" opacity="0.4"/>
+        <rect x="17.5" y="23.5" width="3" height="4.5" rx="0.4" fill="var(--accent)" opacity="0.4"/>
+        <rect x="22" y="23.5" width="3" height="4.5" rx="0.4" fill="var(--accent)" opacity="0.4"/>
+        <circle cx="26" cy="22.5" r="1.2" fill="var(--status-ok)"/>
+      </svg>
+      <div class="header-brand">
+        <h1>TRM<span>COMPARE</span></h1>
+        <span class="header-tagline">Self-Host Guide</span>
+      </div>
     </div>
     <nav class="header-nav">
       <a href="../">Use It Now</a>

@@ -1,8 +1,6 @@
 <p align="center">
-  <strong style="font-size: 2rem;">TRM<span>Compare</span></strong>
+  <img src="docs/logo-dark.svg" alt="TRMCompare Logo" width="360">
 </p>
-
-<h1 align="center">TRMCompare</h1>
 
 <p align="center">
   <em>Stop staring. Start comparing.</em>
@@ -28,7 +26,7 @@ Paste terminal output from your old and new switches. See every MAC address side
 No more eyeballing two terminal windows. No more "stare and compare" until your vision blurs. Paste, click, done.
 
 <p align="center">
-  <img src="docs/screenshot-audit.png" alt="TRMCompare Audit View" width="100%">
+  <img src="docs/screenshot-results.png" alt="TRMCompare Audit View" width="100%">
 </p>
 
 ## The Problem
@@ -45,11 +43,17 @@ TRMCompare does the staring for you. One line per MAC address. Old switch on the
 - **Side-by-side audit** — One row per MAC address. Old switch data on the left, new switch data on the right. MAC address anchored in the center.
 - **Mismatch detection** — VLAN changes, port type changes (access/trunk/voice), description mismatches, and CDP neighbor changes are flagged with color-coded badges.
 - **Layered port classification** — Trunk/Voice/Access detection uses MAC table heuristics, `show vlan` definitive data, and CDP neighbor confirmation for maximum accuracy.
+- **Dark + Light themes** — Dark charcoal default for long sessions, plus an eye-friendly blue-gray light mode. Toggle persists across sessions.
 - **Sortable columns** — Click any column header to sort. Sort by old port, new VLAN, description, CDP neighbor, or issues.
 - **Filter pills** — Toggle Trunk, Voice, Access, New, Missing. Click "Issues Only" to hide all OK rows and focus on problems.
 - **Text search** — Type in the filter box to search across all columns.
 - **Excel + PDF export** — One-click export for documentation and handoff.
 - **100% client-side** — Your data never leaves your browser. No server, no account, no telemetry.
+
+<p align="center">
+  <img src="docs/screenshot-issues.png" alt="Issues Only filter" width="100%">
+  <br><em>Issues Only — one click hides all OK rows</em>
+</p>
 
 ## Quick Start
 

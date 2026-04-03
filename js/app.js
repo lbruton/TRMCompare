@@ -297,6 +297,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportExcelBtn = document.getElementById('export-excel-btn');
   const exportPdfBtn = document.getElementById('export-pdf-btn');
 
+  // Theme toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('trmc-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('trmc-theme', next);
+  });
+
   compareBtn.addEventListener('click', () => {
     clearMessages();
 
