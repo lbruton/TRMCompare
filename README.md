@@ -16,7 +16,9 @@
 </p>
 
 <p align="center">
-  <a href="https://lbruton.github.io/TRMCompare/"><strong>Use it now</strong></a>
+  <a href="https://lbruton.github.io/TRMCompare/"><strong>Use it now</strong></a> &bull;
+  <a href="https://lbruton.github.io/TRMCompare/about/">About &amp; Screenshots</a> &bull;
+  <a href="https://lbruton.github.io/TRMCompare/install/">Self-Host Guide</a>
 </p>
 
 ---

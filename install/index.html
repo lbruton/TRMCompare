@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRMCompare — Self-Host</title>
+  <meta name="description" content="Run TRMCompare locally. Multiple install methods: Python, download, or bookmark.">
+  <style>
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-card: #0f3460;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00b4d8;
+      --border: #2a2a4a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+
+    header { background: var(--bg-secondary); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+    .header-left { display: flex; align-items: baseline; gap: 1rem; }
+    header h1 { font-size: 1.6rem; color: var(--text-primary); font-weight: 700; }
+    header h1 span { color: var(--accent); }
+    .header-tagline { font-size: 0.85rem; color: var(--text-secondary); }
+    .header-nav { display: flex; gap: 1rem; }
+    .header-nav a { color: var(--accent); text-decoration: none; font-size: 0.9rem; padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--accent); transition: all 0.2s; }
+    .header-nav a:hover { background: var(--accent); color: #fff; }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 2rem; }
+    h2 { font-size: 1.8rem; margin-bottom: 0.5rem; text-align: center; }
+    h2 span { color: var(--accent); }
+    .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1rem; }
+
+    .method { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .method-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+    .method-badge { background: var(--accent); color: #fff; padding: 0.15rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .method-badge-alt { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border); }
+    .method h3 { font-size: 1.15rem; }
+    .method p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .method pre { background: var(--bg-primary); padding: 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--accent); overflow-x: auto; margin-bottom: 0.75rem; font-family: 'Courier New', monospace; }
+    .method code { background: var(--bg-primary); padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.85rem; font-family: 'Courier New', monospace; }
+    .method ol, .method ul { color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+    .method li { margin-bottom: 0.4rem; }
+    .method a { color: var(--accent); }
+
+    .bookmark-section { text-align: center; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem; }
+    .bookmark-section h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+    .bookmark-section p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
+    .bookmark-btn { display: inline-block; background: var(--accent); color: #fff; padding: 0.6rem 1.5rem; border-radius: 6px; font-weight: 600; text-decoration: none; transition: background 0.2s; }
+    .bookmark-btn:hover { background: #0096b7; }
+
+    .note { background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.2); border-radius: 6px; padding: 1rem; margin-top: 1.5rem; }
+    .note p { color: var(--text-secondary); font-size: 0.85rem; margin: 0; }
+    .note strong { color: var(--accent); }
+
+    footer { text-align: center; padding: 1.5rem 2rem; color: var(--text-secondary); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>TRM<span>Compare</span></h1>
+      <span class="header-tagline">Self-Host Guide</span>
+    </div>
+    <nav class="header-nav">
+      <a href="../">Use It Now</a>
+      <a href="../about/">About</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Run It <span>Yourself</span></h2>
+    <p class="subtitle">TRMCompare is a static site. No server-side code, no database, no containers. Just files and a browser.</p>
+
+    <div class="bookmark-section">
+      <h3>Quickest option: just bookmark it</h3>
+      <p>The GitHub Pages version works everywhere with internet access. Bookmark it and you're done.</p>
+      <a href="../" class="bookmark-btn">Bookmark TRMCompare</a>
+    </div>
+
+    <div class="method">
+      <div class="method-header">
+        <span class="method-badge">Recommended</span>
+        <h3>Python (one command)</h3>
+      </div>
+      <p>Every Mac and most Linux systems have Python 3 installed. Clone and serve:</p>
+      <pre>git clone https://github.com/lbruton/TRMCompare.git
+cd TRMCompare
+python3 -m http.server 8080</pre>
+      <p>Open <code>http://localhost:8080</code> in your browser. That's it.</p>
+      <p>To stop the server, press <code>Ctrl+C</code> in the terminal.</p>
+    </div>
+
+    <div class="method">
+      <div class="method-header">
+        <span class="method-badge method-badge-alt">Alternative</span>
+        <h3>Download ZIP</h3>
+      </div>
+      <p>No git? No problem.</p>
+      <ol>
+        <li>Go to the <a href="https://github.com/lbruton/TRMCompare/archive/refs/heads/main.zip">ZIP download</a></li>
+        <li>Extract the ZIP</li>
+        <li>Open a terminal in the extracted folder</li>
+        <li>Run <code>python3 -m http.server 8080</code></li>
+        <li>Open <code>http://localhost:8080</code></li>
+      </ol>
+    </div>
+
+    <div class="method">
+      <div class="method-header">
+        <span class="method-badge method-badge-alt">Alternative</span>
+        <h3>Node.js</h3>
+      </div>
+      <p>If you have Node.js installed:</p>
+      <pre>npx serve .</pre>
+      <p>Or use any static file server: nginx, Apache, Caddy, IIS &mdash; just point it at the folder.</p>
+    </div>
+
+    <div class="method">
+      <div class="method-header">
+        <span class="method-badge method-badge-alt">Windows</span>
+        <h3>Windows without Python</h3>
+      </div>
+      <p>Don't have Python on Windows? Use the built-in PowerShell approach:</p>
+      <pre>cd TRMCompare
+Start-Process "http://localhost:8080"
+python -m http.server 8080</pre>
+      <p>Or install Python from <a href="https://www.python.org/downloads/">python.org</a> &mdash; check "Add to PATH" during install.</p>
+    </div>
+
+    <div class="note">
+      <p><strong>Why do I need a server?</strong> TRMCompare uses ES modules (<code>import</code>/<code>export</code>), which browsers block when opening files directly (<code>file://</code>) due to CORS security. Any HTTP server works &mdash; the server just delivers the files, all processing happens in your browser.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>TRMCompare &mdash; built by <a href="https://github.com/lbruton">lbruton</a>. <a href="https://github.com/lbruton/TRMCompare">Source on GitHub</a>.</p>
+  </footer>
+</body>
+</html>
