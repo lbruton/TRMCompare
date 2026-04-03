@@ -1,20 +1,41 @@
-# TRMCompare
+<p align="center">
+  <strong style="font-size: 2rem;">TRM<span>Compare</span></strong>
+</p>
 
-**Stop staring. Start comparing.**
+<h1 align="center">TRMCompare</h1>
 
-TRMCompare is a client-side switch migration audit tool. Paste terminal output from your old and new switches, and instantly see every MAC address side-by-side with VLAN, port type, description, and CDP neighbor data — with mismatches highlighted.
+<p align="center">
+  <em>Stop staring. Start comparing.</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/client--side-no_server-22c55e" alt="Client-side, no server">
+  <img src="https://img.shields.io/badge/Cisco-IOS_%7C_IOS--XE_%7C_NX--OS-6366f1" alt="Cisco IOS, IOS-XE, NX-OS">
+  <img src="https://img.shields.io/badge/zero-dependencies-00b4d8" alt="Zero dependencies">
+</p>
+
+<p align="center">
+  <a href="https://lbruton.github.io/TRMCompare/"><strong>Use it now</strong></a>
+</p>
+
+---
+
+Paste terminal output from your old and new switches. See every MAC address side-by-side with VLAN, port type, description, and CDP neighbor data — mismatches highlighted instantly.
 
 No more eyeballing two terminal windows. No more "stare and compare" until your vision blurs. Paste, click, done.
 
-![TRMCompare Audit View](docs/screenshot-audit.png)
+<p align="center">
+  <img src="docs/screenshot-audit.png" alt="TRMCompare Audit View" width="100%">
+</p>
 
-## Why
+## The Problem
 
 Every network engineer has been there: you've swapped a switch, moved the cables, and now something doesn't work. A printer landed on the wrong VLAN. A camera port got plugged into a phone port. A trunk lost a device.
 
-The old workflow: open two terminal windows, run `show mac address-table` on both, and stare at them until you spot the difference. On a 48-port switch, that's hundreds of lines of MAC addresses across dozens of VLANs.
+The old way: open two terminal windows, run `show mac address-table` on both, and stare at them until you find the difference. On a 48-port switch with multiple VLANs, that's hundreds of lines.
 
-TRMCompare does the staring for you. One line per MAC address. Old switch on the left, new switch on the right. Mismatches flagged in red. Filter to issues only. Export to Excel for documentation. Move on with your day.
+TRMCompare does the staring for you. One line per MAC address. Old switch on the left, new switch on the right. Mismatches flagged. Filter to issues only. Export for documentation. Move on with your day.
 
 ## Features
 

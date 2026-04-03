@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TRMCompare — Switch Migration Audit Tool</title>
-  <meta name="description" content="Stop staring and comparing terminal outputs. Paste your old and new switch data, see every MAC, VLAN, and mismatch instantly.">
+  <meta name="description" content="Client-side Cisco switch migration audit tool. Paste old and new switch output, see every MAC, VLAN, and mismatch instantly.">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header>
-    <h1>TRM<span class="brand-accent">Compare</span></h1>
+    <div class="header-left">
+      <h1>TRM<span class="brand-accent">Compare</span></h1>
+      <span class="header-tagline">Switch Migration Audit</span>
+    </div>
     <div class="legend">
       <div class="legend-item"><span class="port-tag port-tag-trunk">Trunk</span></div>
       <div class="legend-item"><span class="port-tag port-tag-voice">Voice</span></div>
@@ -21,49 +24,34 @@
     </div>
   </header>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h2>Stop Staring. Start Comparing.</h2>
-      <p class="hero-subtitle">Paste your old and new switch output. See every MAC, every VLAN, every mismatch &mdash; instantly.</p>
-      <div class="hero-steps">
-        <div class="hero-step">
-          <span class="step-number">1</span>
-          <div>
-            <strong>Capture</strong>
-            <p>Run 4 show commands on each switch</p>
-          </div>
-        </div>
-        <div class="hero-step">
-          <span class="step-number">2</span>
-          <div>
-            <strong>Paste</strong>
-            <p>Drop the terminal output into each panel</p>
-          </div>
-        </div>
-        <div class="hero-step">
-          <span class="step-number">3</span>
-          <div>
-            <strong>Compare</strong>
-            <p>Mismatches highlighted, sorted, exportable</p>
-          </div>
+  <main>
+    <div class="how-it-works">
+      <div class="step-card">
+        <span class="step-number">1</span>
+        <div>
+          <strong>Capture</strong>
+          <p>Run these on each switch:</p>
+          <code>show mac address-table</code>
+          <code>show interfaces description</code>
+          <code>show cdp neighbors</code>
+          <code>show vlan</code>
         </div>
       </div>
-      <a href="#tool" class="hero-cta">Try It Now</a>
+      <div class="step-card">
+        <span class="step-number">2</span>
+        <div>
+          <strong>Paste</strong>
+          <p>Copy the full terminal output from each switch into the panels below. Multi-command paste supported.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">3</span>
+        <div>
+          <strong>Compare</strong>
+          <p>One row per MAC. Old switch on the left, new switch on the right. Mismatches highlighted, sortable, filterable, exportable.</p>
+        </div>
+      </div>
     </div>
-  </section>
-
-  <main id="tool">
-    <details class="instruction-card">
-      <summary>Commands to Run on the Switch</summary>
-      <div class="instruction-body">
-        <p>Run these commands and paste the full output:</p>
-        <pre>show mac address-table
-show interfaces description
-show cdp neighbors
-show vlan</pre>
-        <p class="instruction-tip">Tip: Copy everything from the hostname# prompt to the end of your terminal output. Only <code>show mac address-table</code> is required &mdash; the rest add enrichment data for better accuracy.</p>
-      </div>
-    </details>
 
     <div class="input-grid">
       <div class="input-panel">
