@@ -1,0 +1,72 @@
+IDF2-SW01#show mac address-table
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+   1    0050.7966.6800    DYNAMIC     Gi1/5
+  10    aabb.cc00.0101    DYNAMIC     Gi1/5
+  10    aabb.cc00.0102    DYNAMIC     Gi1/6
+ 150    aabb.cc00.0112    DYNAMIC     Gi1/6
+  10    aabb.cc00.0103    DYNAMIC     Gi1/7
+ 150    aabb.cc00.0113    DYNAMIC     Gi1/7
+  20    aabb.cc00.0201    DYNAMIC     Gi1/9
+  20    aabb.cc00.0202    DYNAMIC     Gi1/9
+  20    cafe.babe.0001    DYNAMIC     Gi1/9
+  40    cccc.0000.0001    DYNAMIC     Gi1/10
+  40    cccc.0000.0002    DYNAMIC     Gi1/10
+  40    cccc.0000.0003    DYNAMIC     Gi1/10
+  99    0050.7966.6801    DYNAMIC     Gi1/1
+  99    0050.7966.6802    DYNAMIC     Gi1/2
+  10    dead.beef.0001    DYNAMIC     Gi1/5
+  30    aabb.cc00.0301    DYNAMIC     Gi1/1
+  30    aabb.cc00.0302    DYNAMIC     Gi1/1
+  30    aabb.cc00.0303    DYNAMIC     Gi1/1
+  30    aabb.cc00.0304    DYNAMIC     Gi1/2
+  30    aabb.cc00.0305    DYNAMIC     Gi1/2
+  10    dddd.0000.0001    DYNAMIC     Gi1/1
+  20    dddd.0000.0002    DYNAMIC     Gi1/1
+Total Mac Addresses for this criterion: 22
+IDF2-SW01#show interfaces description
+Interface                      Status         Protocol Description
+Gi1/1                          up             up       UPLINK-TO-DIST1
+Gi1/2                          up             up       UPLINK-TO-DIST2
+Gi1/3                          down           down
+Gi1/4                          down           down
+Gi1/5                          up             up       AP-LOBBY
+Gi1/6                          up             up       PHONE-FRONT-DESK
+Gi1/7                          up             up       PHONE-BREAKROOM
+Gi1/8                          down           down     PRINTER-MFP
+Gi1/9                          up             up       CAMERA-ENTRANCE
+Gi1/10                         up             up       SIGNAGE-DISPLAY
+Vl1                            up             up       MGMT
+Vl10                           up             up       DATA
+Vl20                           up             up       SECURITY
+Vl30                           up             up       WIRELESS
+Vl40                           up             up       SIGNAGE
+Vl99                           up             up       NATIVE-UPLINK
+Vl150                          up             up       VOICE
+IDF2-SW01#show cdp neighbors
+Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,
+                  D - Remote, C - CVTA, M - Two-port Mac Relay
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+DIST1-SW01       Gig 1/1           152              S     C9300     Gig 0/24
+DIST2-SW01       Gig 1/2           138              S     C9300     Gig 0/24
+AP-LOBBY         Gig 1/5           171              T     C9120AXI  Gig 0/1
+SEP00112233AA    Gig 1/6           125              H     CP-8865   Port 1
+SEP00112233BB    Gig 1/7           119              H     CP-8865   Port 1
+IDF2-SW01#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/5
+10   DATA                             active    Gi1/5, Gi1/6, Gi1/7, Gi1/8
+20   SECURITY                         active    Gi1/9
+40   SIGNAGE                          active    Gi1/10
+150  VOICE                            active    Gi1/6, Gi1/7
+1002 fddi-default                     active
+1003 token-ring-default               active
+1004 fddinet-default                  active
+1005 trnet-default                    active

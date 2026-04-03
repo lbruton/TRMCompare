@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRMCompare — Switch Migration Audit Tool</title>
+  <meta name="description" content="Stop staring and comparing terminal outputs. Paste your old and new switch data, see every MAC, VLAN, and mismatch instantly.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>TRM<span class="brand-accent">Compare</span></h1>
+    <div class="legend">
+      <div class="legend-item"><span class="port-tag port-tag-trunk">Trunk</span></div>
+      <div class="legend-item"><span class="port-tag port-tag-voice">Voice</span></div>
+      <div class="legend-item"><span class="issue-badge issue-badge-ok">OK</span></div>
+      <div class="legend-item"><span class="issue-badge issue-badge-vlan">VLAN</span></div>
+      <div class="legend-item"><span class="issue-badge issue-badge-desc">Desc</span></div>
+      <div class="legend-item"><span class="issue-badge issue-badge-new">New</span></div>
+      <div class="legend-item"><span class="issue-badge issue-badge-missing">Missing</span></div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h2>Stop Staring. Start Comparing.</h2>
+      <p class="hero-subtitle">Paste your old and new switch output. See every MAC, every VLAN, every mismatch &mdash; instantly.</p>
+      <div class="hero-steps">
+        <div class="hero-step">
+          <span class="step-number">1</span>
+          <div>
+            <strong>Capture</strong>
+            <p>Run 4 show commands on each switch</p>
+          </div>
+        </div>
+        <div class="hero-step">
+          <span class="step-number">2</span>
+          <div>
+            <strong>Paste</strong>
+            <p>Drop the terminal output into each panel</p>
+          </div>
+        </div>
+        <div class="hero-step">
+          <span class="step-number">3</span>
+          <div>
+            <strong>Compare</strong>
+            <p>Mismatches highlighted, sorted, exportable</p>
+          </div>
+        </div>
+      </div>
+      <a href="#tool" class="hero-cta">Try It Now</a>
+    </div>
+  </section>
+
+  <main id="tool">
+    <details class="instruction-card">
+      <summary>Commands to Run on the Switch</summary>
+      <div class="instruction-body">
+        <p>Run these commands and paste the full output:</p>
+        <pre>show mac address-table
+show interfaces description
+show cdp neighbors
+show vlan</pre>
+        <p class="instruction-tip">Tip: Copy everything from the hostname# prompt to the end of your terminal output. Only <code>show mac address-table</code> is required &mdash; the rest add enrichment data for better accuracy.</p>
+      </div>
+    </details>
+
+    <div class="input-grid">
+      <div class="input-panel">
+        <label for="before-input">Old Switch</label>
+        <textarea id="before-input" rows="12" placeholder="Paste terminal output from the OLD switch here...
+
+Supports full terminal paste with multiple show commands,
+or just 'show mac address-table' output on its own."></textarea>
+      </div>
+      <div class="input-panel">
+        <label for="after-input">New Switch</label>
+        <textarea id="after-input" rows="12" placeholder="Paste terminal output from the NEW switch here...
+
+Same format as the old switch. The tool auto-detects
+IOS, IOS-XE, and NX-OS output formats."></textarea>
+      </div>
+    </div>
+
+    <div class="compare-row">
+      <button id="compare-btn" class="btn-compare">Compare</button>
+    </div>
+
+    <div id="messages"></div>
+
+    <div id="results-section" style="display:none">
+      <div class="controls-row">
+        <input type="text" id="filter-input" class="filter-input" placeholder="Filter by MAC, port, VLAN, description...">
+        <div class="export-buttons">
+          <button id="export-excel-btn" class="btn-export">Export Excel</button>
+          <button id="export-pdf-btn" class="btn-export">Export PDF</button>
+        </div>
+      </div>
+
+      <div id="audit-view">
+        <div id="audit-filter-bar" class="summary-bar">
+          <div class="audit-filter-pill active" data-audit-filter="all">All</div>
+          <div class="audit-filter-pill" data-audit-filter="issues">Issues Only</div>
+          <div class="summary-divider"></div>
+          <div class="audit-filter-pill active" data-audit-filter="trunk">Trunk</div>
+          <div class="audit-filter-pill active" data-audit-filter="voice">Voice</div>
+          <div class="audit-filter-pill active" data-audit-filter="access">Access</div>
+          <div class="summary-divider"></div>
+          <div class="audit-filter-pill" data-audit-filter="new">New</div>
+          <div class="audit-filter-pill" data-audit-filter="missing">Missing</div>
+        </div>
+        <table id="audit-table" class="results-table audit-table">
+          <thead>
+            <tr>
+              <th colspan="5" class="audit-group-header audit-group-old">Old Switch</th>
+              <th class="audit-group-header audit-group-mac">MAC</th>
+              <th colspan="5" class="audit-group-header audit-group-new">New Switch</th>
+              <th class="audit-group-header audit-group-issues">Issues</th>
+            </tr>
+            <tr>
+              <th class="sortable-audit" data-audit-sort="old-port">Port <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="old-vlan">VLAN <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="old-type">Type <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="old-desc">Description <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="old-cdp">CDP Neighbor <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="mac">MAC Address <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="new-port">Port <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="new-vlan">VLAN <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="new-type">Type <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="new-desc">Description <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="new-cdp">CDP Neighbor <span class="sort-arrow"></span></th>
+              <th class="sortable-audit" data-audit-sort="issues">Status <span class="sort-arrow"></span></th>
+            </tr>
+          </thead>
+          <tbody id="audit-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>TRMCompare &mdash; 100% client-side. Your data never leaves your browser.</p>
+  </footer>
+
+  <script src="libs/xlsx.full.min.js"></script>
+  <script src="libs/jspdf.umd.min.js"></script>
+  <script src="libs/jspdf.plugin.autotable.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
