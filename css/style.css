@@ -27,9 +27,6 @@ header h1 { font-size: 1.6rem; color: var(--text-primary); font-weight: 700; let
 .brand-accent { color: var(--accent); }
 .header-tagline { font-size: 0.85rem; color: var(--text-secondary); font-weight: 400; }
 
-/* Color legend */
-.legend { display: flex; gap: 0.75rem; font-size: 0.85rem; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 0.4rem; }
 
 /* How it works — step cards */
 .how-it-works { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
@@ -62,8 +59,8 @@ main { padding: 1.5rem 2rem; }
 .message.info { background: rgba(0, 180, 216, 0.1); color: var(--accent); border: 1px solid var(--accent); }
 
 /* Filter bar */
-.summary-bar { background: var(--bg-secondary); padding: 1rem 1.5rem; border-radius: 6px; margin-bottom: 1rem; display: flex; gap: 1rem; font-size: 0.95rem; border: 1px solid var(--border); align-items: center; flex-wrap: wrap; }
-.summary-divider { width: 1px; height: 1.5rem; background: var(--border); margin: 0 0.25rem; }
+.filter-bar { background: var(--bg-secondary); padding: 0.75rem 1.25rem; border-radius: 6px; margin-bottom: 1rem; display: flex; gap: 0.5rem; font-size: 0.85rem; border: 1px solid var(--border); align-items: center; flex-wrap: wrap; }
+.filter-divider { width: 1px; height: 1.5rem; background: var(--border); margin: 0 0.25rem; }
 
 /* Controls row */
 .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; }
@@ -102,11 +99,24 @@ main { padding: 1.5rem 2rem; }
 .audit-group-mac { background: var(--bg-card); color: var(--text-primary); border-bottom: 2px solid var(--border); }
 .audit-group-issues { background: var(--bg-card); color: var(--text-secondary); border-bottom: 2px solid var(--border); }
 
-/* Audit filter pills */
-.audit-filter-pill { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.3rem 0.75rem; border-radius: 6px; border: 1px solid transparent; transition: opacity 0.2s, border-color 0.2s; user-select: none; font-size: 0.85rem; color: var(--text-primary); }
-.audit-filter-pill:hover { border-color: var(--border); }
-.audit-filter-pill.active { border-color: var(--accent); color: var(--accent); }
-.audit-filter-pill:not(.active) { opacity: 0.4; }
+/* Filter pills — colored badges that double as toggles */
+.filter-pill { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; cursor: pointer; user-select: none; transition: opacity 0.2s; border: 1px solid transparent; }
+.filter-pill:not(.active) { opacity: 0.25; }
+.filter-pill:hover { opacity: 0.8; }
+.filter-pill-all { background: var(--bg-card); color: var(--text-primary); border-color: var(--border); }
+.filter-pill-all.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.filter-pill-issues { background: rgba(220, 53, 69, 0.15); color: var(--removed-text); border-color: rgba(220, 53, 69, 0.3); }
+.filter-pill-issues.active { background: rgba(220, 53, 69, 0.3); border-color: var(--removed-text); }
+.filter-pill-trunk { background: rgba(0, 180, 216, 0.15); color: var(--accent); border-color: rgba(0, 180, 216, 0.3); }
+.filter-pill-trunk.active { background: rgba(0, 180, 216, 0.25); border-color: var(--accent); }
+.filter-pill-voice { background: rgba(156, 39, 176, 0.12); color: #ce93d8; border-color: rgba(156, 39, 176, 0.3); }
+.filter-pill-voice.active { background: rgba(156, 39, 176, 0.2); border-color: #ce93d8; }
+.filter-pill-access { background: var(--bg-card); color: var(--text-secondary); border-color: var(--border); }
+.filter-pill-access.active { background: var(--bg-card); color: var(--text-primary); border-color: var(--text-secondary); }
+.filter-pill-new { background: rgba(40, 167, 69, 0.15); color: var(--new-text); border-color: rgba(40, 167, 69, 0.3); }
+.filter-pill-new.active { background: rgba(40, 167, 69, 0.25); border-color: var(--new-text); }
+.filter-pill-missing { background: rgba(220, 53, 69, 0.15); color: var(--removed-text); border-color: rgba(220, 53, 69, 0.3); }
+.filter-pill-missing.active { background: rgba(220, 53, 69, 0.25); border-color: var(--removed-text); }
 
 /* Audit sortable headers */
 .sortable-audit { cursor: pointer; user-select: none; white-space: nowrap; }

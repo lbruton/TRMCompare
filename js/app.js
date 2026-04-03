@@ -276,7 +276,7 @@ function applyFilters() {
 }
 
 function updatePillStyles() {
-  document.querySelectorAll('.audit-filter-pill').forEach(pill => {
+  document.querySelectorAll('.filter-pill').forEach(pill => {
     const filter = pill.dataset.auditFilter;
     if (activeFilters.has(filter)) {
       pill.classList.add('active');
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Filter pill handlers
-  document.querySelectorAll('.audit-filter-pill').forEach(pill => {
+  document.querySelectorAll('.filter-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       const filter = pill.dataset.auditFilter;
 

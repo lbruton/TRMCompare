@@ -13,15 +13,6 @@
       <h1>TRM<span class="brand-accent">Compare</span></h1>
       <span class="header-tagline">Switch Migration Audit</span>
     </div>
-    <div class="legend">
-      <div class="legend-item"><span class="port-tag port-tag-trunk">Trunk</span></div>
-      <div class="legend-item"><span class="port-tag port-tag-voice">Voice</span></div>
-      <div class="legend-item"><span class="issue-badge issue-badge-ok">OK</span></div>
-      <div class="legend-item"><span class="issue-badge issue-badge-vlan">VLAN</span></div>
-      <div class="legend-item"><span class="issue-badge issue-badge-desc">Desc</span></div>
-      <div class="legend-item"><span class="issue-badge issue-badge-new">New</span></div>
-      <div class="legend-item"><span class="issue-badge issue-badge-missing">Missing</span></div>
-    </div>
   </header>
 
   <main>
@@ -86,16 +77,16 @@ IOS, IOS-XE, and NX-OS output formats."></textarea>
       </div>
 
       <div id="audit-view">
-        <div id="audit-filter-bar" class="summary-bar">
-          <div class="audit-filter-pill active" data-audit-filter="all">All</div>
-          <div class="audit-filter-pill" data-audit-filter="issues">Issues Only</div>
-          <div class="summary-divider"></div>
-          <div class="audit-filter-pill active" data-audit-filter="trunk">Trunk</div>
-          <div class="audit-filter-pill active" data-audit-filter="voice">Voice</div>
-          <div class="audit-filter-pill active" data-audit-filter="access">Access</div>
-          <div class="summary-divider"></div>
-          <div class="audit-filter-pill" data-audit-filter="new">New</div>
-          <div class="audit-filter-pill" data-audit-filter="missing">Missing</div>
+        <div id="audit-filter-bar" class="filter-bar">
+          <div class="filter-pill filter-pill-all active" data-audit-filter="all">All</div>
+          <div class="filter-pill filter-pill-issues" data-audit-filter="issues">Issues Only</div>
+          <div class="filter-divider"></div>
+          <div class="filter-pill filter-pill-trunk active" data-audit-filter="trunk">Trunk</div>
+          <div class="filter-pill filter-pill-voice active" data-audit-filter="voice">Voice</div>
+          <div class="filter-pill filter-pill-access active" data-audit-filter="access">Access</div>
+          <div class="filter-divider"></div>
+          <div class="filter-pill filter-pill-new" data-audit-filter="new">New</div>
+          <div class="filter-pill filter-pill-missing" data-audit-filter="missing">Missing</div>
         </div>
         <table id="audit-table" class="results-table audit-table">
           <thead>
