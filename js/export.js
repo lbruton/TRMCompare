@@ -3,90 +3,130 @@
 // Libraries loaded via classic script tags: SheetJS (window.XLSX), jsPDF (window.jspdf), jsPDF-AutoTable
 
 /**
- * Export comparison results to an Excel (.xlsx) file.
- * @param {Object} results - CompareResult with entries[] and summary{}
- * @param {string} [filename] - Output filename (default: "mac-compare.xlsx")
+ * Derive a display status from an audit entry's issues array.
+ */
+function entryStatus(entry) {
+  if (entry.issues.includes('new')) return 'NEW';
+  if (entry.issues.includes('missing')) return 'MISSING';
+  if (entry.issues.length > 0) return 'CHANGED';
+  return 'OK';
+}
+
+/**
+ * Compute summary counts from audit entries.
+ */
+function computeSummary(entries) {
+  let changed = 0, newCount = 0, missing = 0, ok = 0;
+  for (const e of entries) {
+    const s = entryStatus(e);
+    if (s === 'CHANGED') changed++;
+    else if (s === 'NEW') newCount++;
+    else if (s === 'MISSING') missing++;
+    else ok++;
+  }
+  return { changed, new: newCount, missing, ok, total: entries.length };
+}
+
+/**
+ * Detect which enrichment columns have data across all entries.
+ */
+function detectEnrichment(entries) {
+  return {
+    hasDesc: entries.some(e => e.old.desc || e.new.desc),
+    hasCdp: entries.some(e => e.old.cdp || e.new.cdp),
+  };
+}
+
+/**
+ * Export audit entries to an Excel (.xlsx) file.
+ * @param {Object} results - { entries: AuditEntry[] }
+ * @param {string} [filename] - Output filename (default: "mac-audit.xlsx")
  */
 export function exportToExcel(results, filename) {
   const XLSX = window.XLSX;
-  const { moved, new: newCount, removed, unchanged, total } = results.summary;
-
-  // Detect which enrichment columns have data
-  const hasDescription = results.entries.some(e => e.beforeDescription || e.afterDescription);
-  const hasCdp = results.entries.some(e => e.beforeCdpNeighbor || e.afterCdpNeighbor);
-  const hasVlanName = results.entries.some(e => e.vlanName);
+  const entries = results.entries;
+  const summary = computeSummary(entries);
+  const { hasDesc, hasCdp } = detectEnrichment(entries);
 
   // Build header row dynamically
-  const headers = ['Status', 'VLAN', 'MAC Address', 'Before Port', 'After Port'];
-  if (hasDescription) headers.push('Description');
-  if (hasCdp) headers.push('CDP Neighbor');
-  if (hasVlanName) headers.push('VLAN Name');
+  const headers = [
+    'Status', 'MAC Address',
+    'Old Port', 'Old VLAN', 'Old Type',
+    'New Port', 'New VLAN', 'New Type',
+    'Issues',
+  ];
+  if (hasDesc) headers.push('Old Desc', 'New Desc');
+  if (hasCdp) headers.push('Old CDP', 'New CDP');
 
-  // Title row — include hostname if available
-  const titleText = results.hostname
-    ? `MAC Address Table Comparison — ${results.hostname}`
-    : 'MAC Address Table Comparison';
+  const titleText = 'MAC Address Audit Comparison';
 
-  // Summary row — include hostname context
-  const summaryParts = [`Moved: ${moved}`, `New: ${newCount}`, `Removed: ${removed}`, `Unchanged: ${unchanged}`, `Total: ${total}`];
+  const summaryParts = [
+    `Changed: ${summary.changed}`,
+    `New: ${summary.new}`,
+    `Missing: ${summary.missing}`,
+    `OK: ${summary.ok}`,
+    `Total: ${summary.total}`,
+  ];
 
-  // Build array-of-arrays for the worksheet
   const aoa = [
     [titleText, '', '', '', new Date().toLocaleString()],
     summaryParts,
-    [], // blank row
+    [],
     headers,
   ];
 
-  // Data rows
-  for (const entry of results.entries) {
-    let beforeLabel = entry.beforePort || '\u2014';
-    if (entry.beforePort && entry.beforePortTag) {
-      beforeLabel += ` [${entry.beforePortTag.toUpperCase()}]`;
-    }
-    let afterLabel = entry.afterPort || '\u2014';
-    if (entry.afterPort && entry.afterPortTag) {
-      afterLabel += ` [${entry.afterPortTag.toUpperCase()}]`;
-    }
+  for (const entry of entries) {
     const row = [
-      entry.status.toUpperCase(),
-      entry.vlan,
+      entryStatus(entry),
       entry.mac,
-      beforeLabel,
-      afterLabel,
+      entry.old.port || '\u2014',
+      entry.old.vlan ?? '\u2014',
+      entry.old.type && entry.old.type !== 'access' ? entry.old.type : '\u2014',
+      entry.new.port || '\u2014',
+      entry.new.vlan ?? '\u2014',
+      entry.new.type && entry.new.type !== 'access' ? entry.new.type : '\u2014',
+      entry.issues.join(', ') || 'OK',
     ];
-    if (hasDescription) row.push(entry.afterDescription || entry.beforeDescription || '\u2014');
-    if (hasCdp) row.push(entry.afterCdpNeighbor || entry.beforeCdpNeighbor || '\u2014');
-    if (hasVlanName) row.push(entry.vlanName || '\u2014');
+    if (hasDesc) {
+      row.push(entry.old.desc || '\u2014');
+      row.push(entry.new.desc || '\u2014');
+    }
+    if (hasCdp) {
+      row.push(entry.old.cdp || '\u2014');
+      row.push(entry.new.cdp || '\u2014');
+    }
     aoa.push(row);
   }
 
   const ws = XLSX.utils.aoa_to_sheet(aoa);
 
-  // Column widths — base columns plus enrichment
+  // Column widths
   const colWidths = [
-    { wch: 12 },
-    { wch: 8 },
-    { wch: 20 },
-    { wch: 15 },
-    { wch: 15 },
+    { wch: 10 }, // Status
+    { wch: 20 }, // MAC
+    { wch: 14 }, // Old Port
+    { wch: 8 },  // Old VLAN
+    { wch: 8 },  // Old Type
+    { wch: 14 }, // New Port
+    { wch: 8 },  // New VLAN
+    { wch: 8 },  // New Type
+    { wch: 18 }, // Issues
   ];
-  if (hasDescription) colWidths.push({ wch: 25 });
-  if (hasCdp) colWidths.push({ wch: 20 });
-  if (hasVlanName) colWidths.push({ wch: 15 });
+  if (hasDesc) { colWidths.push({ wch: 22 }, { wch: 22 }); }
+  if (hasCdp) { colWidths.push({ wch: 20 }, { wch: 20 }); }
   ws['!cols'] = colWidths;
 
   // Attempt cell fill colors (SheetJS Pro only — community edition ignores .s)
   const fillColors = {
-    moved: { fgColor: { rgb: 'FFF3CD' } },
-    new: { fgColor: { rgb: 'D4EDDA' } },
-    removed: { fgColor: { rgb: 'F8D7DA' } },
+    CHANGED: { fgColor: { rgb: 'FFF3CD' } },
+    NEW: { fgColor: { rgb: 'D4EDDA' } },
+    MISSING: { fgColor: { rgb: 'F8D7DA' } },
   };
 
   const totalCols = headers.length;
   try {
     for (let r = 4; r < aoa.length; r++) {
-      const status = aoa[r][0].toLowerCase();
+      const status = aoa[r][0];
       const fill = fillColors[status];
       if (!fill) continue;
       for (let c = 0; c < totalCols; c++) {
@@ -98,89 +138,85 @@ export function exportToExcel(results, filename) {
       }
     }
   } catch (_) {
-    // Cell styling not supported in community edition — data exports fine without colors
+    // Cell styling not supported in community edition
   }
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'MAC Comparison');
-  XLSX.writeFile(wb, filename || 'mac-compare.xlsx');
+  XLSX.utils.book_append_sheet(wb, ws, 'MAC Audit');
+  XLSX.writeFile(wb, filename || 'mac-audit.xlsx');
 }
 
 /**
- * Export comparison results to a PDF file.
- * @param {Object} results - CompareResult with entries[] and summary{}
- * @param {string} [filename] - Output filename (default: "mac-compare.pdf")
+ * Export audit entries to a PDF file.
+ * @param {Object} results - { entries: AuditEntry[] }
+ * @param {string} [filename] - Output filename (default: "mac-audit.pdf")
  */
 export function exportToPDF(results, filename) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-  const { moved, new: newCount, removed, unchanged, total } = results.summary;
+  const entries = results.entries;
+  const summary = computeSummary(entries);
+  const { hasDesc, hasCdp } = detectEnrichment(entries);
+  const hasEnrichment = hasDesc || hasCdp;
 
-  // Detect which enrichment columns have data
-  const hasDescription = results.entries.some(e => e.beforeDescription || e.afterDescription);
-  const hasCdp = results.entries.some(e => e.beforeCdpNeighbor || e.afterCdpNeighbor);
-  const hasVlanName = results.entries.some(e => e.vlanName);
-  const hasEnrichment = hasDescription || hasCdp || hasVlanName;
-
-  // Title — include hostname if available
-  const titleText = results.hostname
-    ? `MAC Address Table Comparison \u2014 ${results.hostname}`
-    : 'MAC Address Table Comparison';
+  const titleText = 'MAC Address Audit Comparison';
 
   doc.setFontSize(16);
   doc.text(titleText, 14, 20);
 
-  // Timestamp
   doc.setFontSize(10);
   doc.text(new Date().toLocaleString(), 14, 28);
 
-  // Summary
   doc.text(
-    `Moved: ${moved} | New: ${newCount} | Removed: ${removed} | Unchanged: ${unchanged} | Total: ${total}`,
+    `Changed: ${summary.changed} | New: ${summary.new} | Missing: ${summary.missing} | OK: ${summary.ok} | Total: ${summary.total}`,
     14,
     34
   );
 
-  // Build header row dynamically — abbreviated names for PDF space
-  const headers = ['Status', 'VLAN', 'MAC Address', 'Before Port', 'After Port'];
-  if (hasDescription) headers.push('Desc');
-  if (hasCdp) headers.push('CDP');
-  if (hasVlanName) headers.push('VName');
+  // Build header row — abbreviated for PDF space
+  const headers = ['Status', 'MAC', 'Old Port', 'Old VLAN', 'Old Type', 'New Port', 'New VLAN', 'New Type', 'Issues'];
+  if (hasDesc) headers.push('Old Desc', 'New Desc');
+  if (hasCdp) headers.push('Old CDP', 'New CDP');
 
-  // Build body rows dynamically
-  const body = results.entries.map((e) => {
-    let beforeLabel = e.beforePort || '\u2014';
-    if (e.beforePort && e.beforePortTag) {
-      beforeLabel += ` [${e.beforePortTag.toUpperCase()}]`;
+  const body = entries.map((e) => {
+    const row = [
+      entryStatus(e),
+      e.mac,
+      e.old.port || '\u2014',
+      e.old.vlan ?? '\u2014',
+      e.old.type && e.old.type !== 'access' ? e.old.type : '\u2014',
+      e.new.port || '\u2014',
+      e.new.vlan ?? '\u2014',
+      e.new.type && e.new.type !== 'access' ? e.new.type : '\u2014',
+      e.issues.join(', ') || 'OK',
+    ];
+    if (hasDesc) {
+      row.push(e.old.desc || '\u2014');
+      row.push(e.new.desc || '\u2014');
     }
-    let afterLabel = e.afterPort || '\u2014';
-    if (e.afterPort && e.afterPortTag) {
-      afterLabel += ` [${e.afterPortTag.toUpperCase()}]`;
+    if (hasCdp) {
+      row.push(e.old.cdp || '\u2014');
+      row.push(e.new.cdp || '\u2014');
     }
-    const row = [e.status.toUpperCase(), String(e.vlan), e.mac, beforeLabel, afterLabel];
-    if (hasDescription) row.push(e.afterDescription || e.beforeDescription || '\u2014');
-    if (hasCdp) row.push(e.afterCdpNeighbor || e.beforeCdpNeighbor || '\u2014');
-    if (hasVlanName) row.push(e.vlanName || '\u2014');
     return row;
   });
 
-  // Comparison table via AutoTable
   doc.autoTable({
     startY: 40,
     head: [headers],
     body: body,
-    styles: { fontSize: hasEnrichment ? 7 : 8, cellPadding: 2, font: 'courier' },
+    styles: { fontSize: 7, cellPadding: 2, font: 'courier' },
     headStyles: { fillColor: [15, 52, 96], textColor: [224, 224, 224] },
     didParseCell: function (data) {
       if (data.section === 'body') {
-        const status = data.row.raw[0].toLowerCase();
-        if (status === 'moved') {
+        const status = data.row.raw[0];
+        if (status === 'CHANGED') {
           data.cell.styles.fillColor = [255, 243, 205];
           data.cell.styles.textColor = [0, 0, 0];
-        } else if (status === 'new') {
+        } else if (status === 'NEW') {
           data.cell.styles.fillColor = [212, 237, 218];
           data.cell.styles.textColor = [0, 0, 0];
-        } else if (status === 'removed') {
+        } else if (status === 'MISSING') {
           data.cell.styles.fillColor = [248, 215, 218];
           data.cell.styles.textColor = [0, 0, 0];
         }
@@ -188,5 +224,5 @@ export function exportToPDF(results, filename) {
     },
   });
 
-  doc.save(filename || 'mac-compare.pdf');
+  doc.save(filename || 'mac-audit.pdf');
 }
