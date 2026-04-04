@@ -12,6 +12,28 @@ const afterText = fs.readFileSync(
   'utf-8'
 );
 
+/**
+ * Run the full parse → classify → diff pipeline inside the browser context.
+ * Extracted to avoid duplicating the evaluate block across tests.
+ */
+async function runPipeline(page, bText, aText) {
+  return page.evaluate(async ({ bText, aText }) => {
+    const { parseTerminalOutput } = await import('./js/parser.js');
+    const { buildAuditEntries, classifyPorts } = await import('./js/diff.js');
+    const bp = parseTerminalOutput(bText);
+    const ap = parseTerminalOutput(aText);
+    const enrichment = {
+      before: { descriptions: bp.interfaceDesc, cdp: bp.cdpNeighbors, vlanNames: bp.vlanData?.names || null },
+      after: { descriptions: ap.interfaceDesc, cdp: ap.cdpNeighbors, vlanNames: ap.vlanData?.names || null },
+    };
+    const portProfiles = {
+      before: classifyPorts(bp.macEntries, { vlanPorts: bp.vlanData?.portVlans || null, cdp: bp.cdpNeighbors || null }),
+      after: classifyPorts(ap.macEntries, { vlanPorts: ap.vlanData?.portVlans || null, cdp: ap.cdpNeighbors || null }),
+    };
+    return buildAuditEntries(bp.macEntries, ap.macEntries, portProfiles, enrichment);
+  }, { bText, aText });
+}
+
 test.describe.serial('TRMCompare Smoke Tests', () => {
   /** @type {import('@playwright/test').Page} */
   let page;
@@ -25,7 +47,7 @@ test.describe.serial('TRMCompare Smoke Tests', () => {
   });
 
   test('Test 1: Page loads correctly', async () => {
-    await page.goto('/');
+    await page.goto('./');
     // Assert heading or title contains app-related text
     const title = await page.title();
     expect(title.length).toBeGreaterThan(0);
@@ -60,7 +82,7 @@ test.describe.serial('TRMCompare Smoke Tests', () => {
   test('Test 3: Parser extracts all command types', async () => {
     // Test before sample
     const beforeResult = await page.evaluate(async (text) => {
-      const { parseTerminalOutput } = await import('/js/parser.js');
+      const { parseTerminalOutput } = await import('./js/parser.js');
       const result = parseTerminalOutput(text);
       return {
         macCount: result.macEntries.length,
@@ -75,11 +97,11 @@ test.describe.serial('TRMCompare Smoke Tests', () => {
     expect(beforeResult.commandsFound).toContain('cdp neighbors');
     expect(beforeResult.commandsFound).toContain('vlan');
     expect(beforeResult.commandsFound.length).toBe(4);
-    expect(beforeResult.commandsMissing).toEqual([]);
+    expect(beforeResult.commandsMissing).toHaveLength(0);
 
     // Test after sample
     const afterResult = await page.evaluate(async (text) => {
-      const { parseTerminalOutput } = await import('/js/parser.js');
+      const { parseTerminalOutput } = await import('./js/parser.js');
       const result = parseTerminalOutput(text);
       return { macCount: result.macEntries.length };
     }, afterText);
@@ -88,68 +110,21 @@ test.describe.serial('TRMCompare Smoke Tests', () => {
   });
 
   test('Test 4: Specific mismatch detection', async () => {
-    // Check for dead.beef.0002 — should show "missing" indicator
-    // This MAC is on old switch VLAN 20 Fa1/7, absent from new switch
-    const missingMac = await page.evaluate(async ({ bText, aText }) => {
-      const { parseTerminalOutput } = await import('/js/parser.js');
-      const { buildAuditEntries, classifyPorts } = await import('/js/diff.js');
-      const bp = parseTerminalOutput(bText);
-      const ap = parseTerminalOutput(aText);
-      const enrichment = {
-        before: { descriptions: bp.interfaceDesc, cdp: bp.cdpNeighbors, vlanNames: bp.vlanData?.names || null },
-        after: { descriptions: ap.interfaceDesc, cdp: ap.cdpNeighbors, vlanNames: ap.vlanData?.names || null },
-      };
-      const portProfiles = {
-        before: classifyPorts(bp.macEntries, { vlanPorts: bp.vlanData?.portVlans || null, cdp: bp.cdpNeighbors || null }),
-        after: classifyPorts(ap.macEntries, { vlanPorts: ap.vlanData?.portVlans || null, cdp: ap.cdpNeighbors || null }),
-      };
-      const entries = buildAuditEntries(bp.macEntries, ap.macEntries, portProfiles, enrichment);
-      const entry = entries.find(e => e.mac === 'dead.beef.0002');
-      return entry ? { issues: entry.issues, hasNew: !!entry.new.port } : null;
-    }, { bText: beforeText, aText: afterText });
+    const entries = await runPipeline(page, beforeText, afterText);
 
-    expect(missingMac).not.toBeNull();
-    expect(missingMac.issues).toContain('missing');
+    // dead.beef.0002 — should show "missing" (on old switch VLAN 20, absent from new)
+    const missingEntry = entries.find(e => e.mac === 'dead.beef.0002');
+    expect(missingEntry).toBeDefined();
+    expect(missingEntry.issues).toContain('missing');
 
-    // Check for aabb.cc00.0201 — should show VLAN mismatch
-    const vlanMismatch = await page.evaluate(async ({ bText, aText }) => {
-      const { parseTerminalOutput } = await import('/js/parser.js');
-      const { buildAuditEntries, classifyPorts } = await import('/js/diff.js');
-      const bp = parseTerminalOutput(bText);
-      const ap = parseTerminalOutput(aText);
-      const enrichment = {
-        before: { descriptions: bp.interfaceDesc, cdp: bp.cdpNeighbors, vlanNames: bp.vlanData?.names || null },
-        after: { descriptions: ap.interfaceDesc, cdp: ap.cdpNeighbors, vlanNames: ap.vlanData?.names || null },
-      };
-      const portProfiles = {
-        before: classifyPorts(bp.macEntries, { vlanPorts: bp.vlanData?.portVlans || null, cdp: bp.cdpNeighbors || null }),
-        after: classifyPorts(ap.macEntries, { vlanPorts: ap.vlanData?.portVlans || null, cdp: ap.cdpNeighbors || null }),
-      };
-      const entries = buildAuditEntries(bp.macEntries, ap.macEntries, portProfiles, enrichment);
-      const entry = entries.find(e => e.mac === 'aabb.cc00.0201');
-      return entry ? { issues: entry.issues } : null;
-    }, { bText: beforeText, aText: afterText });
-
-    expect(vlanMismatch).not.toBeNull();
-    expect(vlanMismatch.issues).toContain('vlan');
+    // aabb.cc00.0201 — should show VLAN mismatch (was VLAN 10, now VLAN 20)
+    const vlanEntry = entries.find(e => e.mac === 'aabb.cc00.0201');
+    expect(vlanEntry).toBeDefined();
+    expect(vlanEntry.issues).toContain('vlan');
   });
 
   test('Test 5: Audit entry shape validation', async () => {
-    const entries = await page.evaluate(async ({ bText, aText }) => {
-      const { parseTerminalOutput } = await import('/js/parser.js');
-      const { buildAuditEntries, classifyPorts } = await import('/js/diff.js');
-      const bp = parseTerminalOutput(bText);
-      const ap = parseTerminalOutput(aText);
-      const enrichment = {
-        before: { descriptions: bp.interfaceDesc, cdp: bp.cdpNeighbors, vlanNames: bp.vlanData?.names || null },
-        after: { descriptions: ap.interfaceDesc, cdp: ap.cdpNeighbors, vlanNames: ap.vlanData?.names || null },
-      };
-      const portProfiles = {
-        before: classifyPorts(bp.macEntries, { vlanPorts: bp.vlanData?.portVlans || null, cdp: bp.cdpNeighbors || null }),
-        after: classifyPorts(ap.macEntries, { vlanPorts: ap.vlanData?.portVlans || null, cdp: ap.cdpNeighbors || null }),
-      };
-      return buildAuditEntries(bp.macEntries, ap.macEntries, portProfiles, enrichment);
-    }, { bText: beforeText, aText: afterText });
+    const entries = await runPipeline(page, beforeText, afterText);
 
     expect(Array.isArray(entries)).toBe(true);
     expect(entries.length).toBeGreaterThan(0);
