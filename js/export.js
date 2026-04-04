@@ -81,10 +81,10 @@ export function exportToExcel(results, filename) {
       entry.mac,
       entry.old.port || '\u2014',
       entry.old.vlan ?? '\u2014',
-      entry.old.type || '\u2014',
+      entry.old.type && entry.old.type !== 'access' ? entry.old.type : '\u2014',
       entry.new.port || '\u2014',
       entry.new.vlan ?? '\u2014',
-      entry.new.type || '\u2014',
+      entry.new.type && entry.new.type !== 'access' ? entry.new.type : '\u2014',
       entry.issues.join(', ') || 'OK',
     ];
     if (hasDesc) {
@@ -174,7 +174,7 @@ export function exportToPDF(results, filename) {
   );
 
   // Build header row — abbreviated for PDF space
-  const headers = ['Status', 'MAC', 'Old Port', 'Old VLAN', 'New Port', 'New VLAN', 'Issues'];
+  const headers = ['Status', 'MAC', 'Old Port', 'Old VLAN', 'Old Type', 'New Port', 'New VLAN', 'New Type', 'Issues'];
   if (hasDesc) headers.push('Old Desc', 'New Desc');
   if (hasCdp) headers.push('Old CDP', 'New CDP');
 
@@ -184,8 +184,10 @@ export function exportToPDF(results, filename) {
       e.mac,
       e.old.port || '\u2014',
       e.old.vlan ?? '\u2014',
+      e.old.type && e.old.type !== 'access' ? e.old.type : '\u2014',
       e.new.port || '\u2014',
       e.new.vlan ?? '\u2014',
+      e.new.type && e.new.type !== 'access' ? e.new.type : '\u2014',
       e.issues.join(', ') || 'OK',
     ];
     if (hasDesc) {
@@ -203,7 +205,7 @@ export function exportToPDF(results, filename) {
     startY: 40,
     head: [headers],
     body: body,
-    styles: { fontSize: hasEnrichment ? 6 : 7, cellPadding: 2, font: 'courier' },
+    styles: { fontSize: 7, cellPadding: 2, font: 'courier' },
     headStyles: { fillColor: [15, 52, 96], textColor: [224, 224, 224] },
     didParseCell: function (data) {
       if (data.section === 'body') {
