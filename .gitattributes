@@ -5,3 +5,10 @@
 .gitignore         export-ignore
 docs/              export-ignore
 CLAUDE.md          export-ignore
+tests/             export-ignore
+playwright.config.js export-ignore
+package.json       export-ignore
+package-lock.json  export-ignore
+node_modules/      export-ignore
+test-results/      export-ignore
+playwright-report/ export-ignore
