@@ -76,7 +76,9 @@ ES modules require HTTP serving — `file://` won't work due to CORS.
 
 ### 1. Capture
 
-Run these commands on both switches (old and new):
+Run these commands on each switch and save the output:
+
+Capture the old switch output **before** the swap. Capture the new switch output **after**.
 
 ```
 show mac address-table
@@ -89,7 +91,7 @@ Only `show mac address-table` is required. The other commands add enrichment dat
 
 ### 2. Paste
 
-Copy the full terminal output (from the `hostname#` prompt to the end) into the Old Switch and New Switch panels. The tool handles multi-command output automatically.
+Paste your saved terminal output (from the `hostname#` prompt to the end) into each panel. The tool handles multi-command output automatically.
 
 ### 3. Compare
 
