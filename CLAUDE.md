@@ -6,7 +6,7 @@ Client-side Cisco switch migration audit tool. Compares MAC address tables side-
 
 - **Prefix:** TRMC
 - **Issues:** `DocVault/Projects/TechRefreshMacCompare/Issues/`
-- **DocVault:** `DocVault/Projects/TechRefreshMacCompare/Overview.md`
+- **DocVault:** Start at `/Volumes/DATA/GitHub/DocVault/Projects/TechRefreshMacCompare/_Index.md` and follow the index
 - **Deploy target:** GitHub Pages on `main` ([lbruton.github.io/TRMCompare](https://lbruton.github.io/TRMCompare/))
 - **Versioning:** git tags (semver), changelog in `CHANGELOG.md`
 
