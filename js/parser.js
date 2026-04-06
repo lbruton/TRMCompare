@@ -25,6 +25,9 @@ function isSkippable(line) {
   // Footer lines
   if (/^total mac addresses/i.test(trimmed)) return true;
 
+  // VLAN "All" entries (system/CPU MACs) — not relevant for migration audits
+  if (/^\s*All\s+/i.test(trimmed)) return true;
+
   // Legend and section labels
   if (/^legend:/i.test(trimmed)) return true;
   if (/multicast entries/i.test(trimmed)) return true;
@@ -150,19 +153,61 @@ export function normalizePort(portName) {
 // --- Multi-command splitter ---
 
 /**
- * Prompt line pattern: hostname#show ... or hostname>show ...
- * Captures: (1) hostname, (2) everything after "show "
+ * Prompt line pattern: hostname#show/sh ... or hostname>show/sh ...
+ * Captures: (1) hostname, (2) everything after "show " or "sh "
  */
-const PROMPT_RE = /^(\S+)[#>]show\s+(.+)$/;
+const PROMPT_RE = /^(\S+)[#>]sh(?:ow)?\s+(.+)$/;
 
 /**
- * Commands we recognize (matched against the text after "show ").
- * Each entry is a substring that must appear at the start of the command portion.
+ * Abbreviation map: maps common abbreviated command forms to their canonical form.
+ * Checked before RECOGNIZED_COMMANDS matching. Order: most specific first.
+ */
+const COMMAND_ALIASES = [
+  // MAC address table
+  ['mac ad',               'mac address-table'],
+  ['mac address-table',    'mac address-table'],
+  // Interfaces
+  ['int stat',             'interfaces status'],
+  ['inter stat',           'interfaces status'],
+  ['interfaces stat',      'interfaces status'],
+  ['interfaces status',    'interfaces status'],
+  ['int desc',             'interfaces description'],
+  ['inter desc',           'interfaces description'],
+  ['interfaces desc',      'interfaces description'],
+  ['interfaces description', 'interfaces description'],
+  // CDP
+  ['cdp nei',              'cdp neighbors'],
+  ['cdp neighbors',        'cdp neighbors'],
+  // LLDP
+  ['lldp nei',             'lldp neighbors'],
+  ['lldp neighbors',       'lldp neighbors'],
+  // VLAN
+  ['vlan br',              'vlan brief'],
+  ['vlan brief',           'vlan brief'],
+  ['vlan',                 'vlan'],
+];
+
+/**
+ * Resolve a raw show-command argument to its canonical recognized form.
+ * Returns the canonical command string, or null if unrecognized.
+ */
+function resolveCommand(showArgs) {
+  const lower = showArgs.toLowerCase();
+  for (const [abbrev, canonical] of COMMAND_ALIASES) {
+    if (lower.startsWith(abbrev)) return canonical;
+  }
+  return null;
+}
+
+/**
+ * Commands we recognize (used for commandsFound/commandsMissing reporting).
  */
 const RECOGNIZED_COMMANDS = [
   'mac address-table',
   'interfaces description',
+  'interfaces status',
   'cdp neighbors',
+  'lldp neighbors',
   'vlan brief',
   'vlan',
 ];
@@ -187,14 +232,12 @@ export function splitCommands(rawText) {
     const promptHost = m[1];
     const showArgs = m[2].trim();
 
-    // Check if this matches a recognized command
-    const matched = RECOGNIZED_COMMANDS.find(cmd =>
-      showArgs.toLowerCase().startsWith(cmd)
-    );
-    if (!matched) continue;
+    // Resolve abbreviated command to canonical form
+    const canonical = resolveCommand(showArgs);
+    if (!canonical) continue;
 
     if (!hostname) hostname = promptHost;
-    boundaries.push({ index: i, command: showArgs });
+    boundaries.push({ index: i, command: canonical });
   }
 
   if (boundaries.length === 0) {
@@ -258,6 +301,82 @@ export function parseInterfaceDescription(text) {
   return result;
 }
 
+// --- show interfaces status parser ---
+
+/**
+ * Parse Cisco "show interfaces status" output.
+ * Columns: Port, Name, Status, Vlan, Duplex, Speed, Type
+ *
+ * Returns the same Map shape as parseInterfaceDescription() for compatibility,
+ * plus access VLAN info that can enrich port classification.
+ *
+ * @param {string} text - Raw command output
+ * @returns {{ descriptions: Map<string, { status: string, protocol: string, description: string }>,
+ *             portVlans: Map<string, number|'trunk'> }}
+ */
+export function parseInterfaceStatus(text) {
+  const descriptions = new Map();
+  const portVlans = new Map();
+  if (!text) return { descriptions, portVlans };
+
+  const lines = text.split('\n');
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed === '') continue;
+
+    // Skip header line
+    if (/^Port\s+/i.test(trimmed) && /Status/i.test(trimmed)) continue;
+
+    // Skip separator lines
+    if (/^[-\s]+$/.test(trimmed)) continue;
+
+    // Match data lines:
+    // Port         Name               Status       Vlan       Duplex  Speed Type
+    // Gi1/0/1      Video Camera       connected    35         a-full  a-100 10/100/1000BaseTX
+    // Te1/1/3      hostnnswan01-f1/0  connected    trunk      full    1000  1000BaseSX SFP
+    // Gi1/0/2                         notconnect   40         auto    auto  10/100/1000BaseTX
+    //
+    // Strategy: Port is first token. Then we scan right-to-left for the fixed-width fields
+    // (Type, Speed, Duplex, Vlan, Status) and what remains is Name.
+    const m = trimmed.match(
+      /^(\S+)\s+(.*?)\s+(connected|notconnect|disabled|err-disabled|inactive|monitoring)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.+)$/i
+    );
+    if (!m) continue;
+
+    const port = normalizePort(m[1]);
+    const name = m[2] ? m[2].trim() : '';
+    const status = m[3].toLowerCase();
+    const vlanField = m[4];
+    // m[5] = duplex, m[6] = speed, m[7] = type (unused for now)
+
+    // Map status to protocol-style values for compatibility with interfaceDesc consumers
+    const isUp = (status === 'connected');
+    const mappedStatus = isUp ? 'up' : (status === 'disabled' ? 'admin down' : 'down');
+    const mappedProtocol = isUp ? 'up' : 'down';
+
+    descriptions.set(port, {
+      status: mappedStatus,
+      protocol: mappedProtocol,
+      description: name,
+    });
+
+    // Extract VLAN info
+    if (vlanField.toLowerCase() === 'trunk') {
+      portVlans.set(port, 'trunk');
+    } else if (vlanField.toLowerCase() === 'routed') {
+      portVlans.set(port, 'routed');
+    } else {
+      const vlanNum = parseInt(vlanField, 10);
+      if (!isNaN(vlanNum)) {
+        portVlans.set(port, vlanNum);
+      }
+    }
+  }
+
+  return { descriptions, portVlans };
+}
+
 // --- show cdp neighbors parser ---
 
 /**
@@ -277,23 +396,23 @@ export function parseCdpNeighbors(text) {
   // e.g. "Gig 1/0/1", "Fas 0/1", "Ten 1/0/1", "Eth1/1", "GigabitEthernet0/0"
   const PORT_PATTERN = /(?:Gig(?:abitEthernet)?|Fas(?:tEthernet)?|Ten(?:GigabitEthernet)?|Eth(?:ernet)?|Twe(?:ntyFiveGigE)?|Po(?:rt-channel)?)\s*[\d/]+/i;
 
-  for (const line of lines) {
+  let pendingDeviceId = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const trimmed = line.trim();
-    if (trimmed === '') continue;
+    if (trimmed === '') { pendingDeviceId = null; continue; }
 
     // Skip header/legend lines
     if (/^Capability Codes/i.test(trimmed)) continue;
-    if (/^\s/.test(line) && !/\S+\s+/.test(trimmed.replace(/^\s+/, ''))) continue; // indented continuation of legend
     if (/Device ID/i.test(trimmed) && /Local/i.test(trimmed)) continue;
     if (/^[-\s]+$/.test(trimmed)) continue;
     if (/^Total cdp entries/i.test(trimmed)) continue;
 
-    // Skip indented capability code continuation lines (start with whitespace, contain only short tokens like letters/commas)
+    // Skip indented capability code continuation lines
     if (/^\s/.test(line) && /^[A-Z\s,\-=]+$/i.test(trimmed) && trimmed.length < 80) continue;
 
-    // Try to parse a CDP neighbor line.
-    // Strategy: Device ID is first token, then find a port pattern for local interface,
-    // then a holdtime number, capability letters, platform, and remote port.
+    // Try single-line match: DeviceID  LocalIntf  Holdtime  Capability  Platform  RemotePort
     const cdpMatch = trimmed.match(
       new RegExp(
         '^(\\S+)\\s+(' + PORT_PATTERN.source + ')\\s+(\\d+)\\s+([A-Za-z](?:\\s+[A-Za-z])*)\\s+(\\S+)\\s+(' + PORT_PATTERN.source + ')\\s*$',
@@ -301,16 +420,99 @@ export function parseCdpNeighbors(text) {
       )
     );
 
-    if (!cdpMatch) continue;
+    if (cdpMatch) {
+      const deviceId = cdpMatch[1];
+      const localPort = normalizePort(cdpMatch[2]);
+      const platform = cdpMatch[5];
+      const remotePort = normalizePort(cdpMatch[6]);
+      result.set(localPort, { deviceId, platform, remotePort });
+      pendingDeviceId = null;
+      continue;
+    }
 
-    const deviceId = cdpMatch[1];
-    const localPort = normalizePort(cdpMatch[2]);
-    // cdpMatch[3] = holdtime (unused)
-    // cdpMatch[4] = capabilities (unused)
-    const platform = cdpMatch[5];
-    const remotePort = normalizePort(cdpMatch[6]);
+    // Multi-line: device ID alone on first line (long hostname wraps)
+    // Check if this is a standalone device ID (single non-whitespace token, no port pattern)
+    if (!PORT_PATTERN.test(trimmed) && /^\S+$/.test(trimmed) && !/^Total/i.test(trimmed)) {
+      pendingDeviceId = trimmed;
+      continue;
+    }
 
-    result.set(localPort, { deviceId, platform, remotePort });
+    // Multi-line continuation: indented line with port data, preceded by a device ID line
+    if (pendingDeviceId && /^\s/.test(line)) {
+      const contMatch = trimmed.match(
+        new RegExp(
+          '^(' + PORT_PATTERN.source + ')\\s+(\\d+)\\s+([A-Za-z](?:\\s+[A-Za-z])*)\\s+(\\S+)\\s+(' + PORT_PATTERN.source + ')\\s*$',
+          'i'
+        )
+      );
+      if (contMatch) {
+        const localPort = normalizePort(contMatch[1]);
+        const platform = contMatch[4];
+        const remotePort = normalizePort(contMatch[5]);
+        result.set(localPort, { deviceId: pendingDeviceId, platform, remotePort });
+        pendingDeviceId = null;
+        continue;
+      }
+    }
+
+    pendingDeviceId = null;
+  }
+
+  return result;
+}
+
+// --- show lldp neighbors parser ---
+
+/**
+ * Parse Cisco "show lldp neighbors" compact output.
+ * Returns same shape as parseCdpNeighbors() for interchangeability.
+ *
+ * LLDP format:
+ *   Device ID           Local Intf     Hold-time  Capability      Port ID
+ *   west-gate-pns.53    Gi1/0/12       20                         port-001
+ *
+ * Note: Device ID can run into Local Intf without whitespace on long hostnames.
+ *
+ * @param {string} text - Raw command output
+ * @returns {Map<string, { deviceId: string, platform: string, remotePort: string }>}
+ *          Keyed by normalized local port
+ */
+export function parseLldpNeighbors(text) {
+  const result = new Map();
+  if (!text) return result;
+
+  const lines = text.split('\n');
+  const PORT_PATTERN = /(?:Gig(?:abitEthernet)?|Fas(?:tEthernet)?|Ten(?:GigabitEthernet)?|Eth(?:ernet)?|Twe(?:ntyFiveGigE)?|Po(?:rt-channel)?|Gi|Te|Fa)\s*[\d/]+/i;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed === '') continue;
+
+    // Skip header/legend lines
+    if (/^Capability codes/i.test(trimmed)) continue;
+    if (/^\s*\(/.test(trimmed)) continue; // capability legend continuation
+    if (/Device ID/i.test(trimmed) && /Local/i.test(trimmed)) continue;
+    if (/^[-\s]+$/.test(trimmed)) continue;
+    if (/^Total entries/i.test(trimmed)) continue;
+
+    // Find the local interface port pattern in the line
+    const portMatch = trimmed.match(PORT_PATTERN);
+    if (!portMatch) continue;
+
+    const portStart = trimmed.indexOf(portMatch[0]);
+    const deviceId = trimmed.substring(0, portStart).trim();
+    if (!deviceId) continue;
+
+    const localPort = normalizePort(portMatch[0]);
+
+    // After local port, find: holdtime, capability (optional), port ID
+    const remainder = trimmed.substring(portStart + portMatch[0].length).trim();
+    const parts = remainder.split(/\s+/);
+
+    // Last token is remote port ID
+    const remotePort = parts.length > 0 ? parts[parts.length - 1] : '';
+
+    result.set(localPort, { deviceId, platform: 'LLDP', remotePort });
   }
 
   return result;
@@ -413,11 +615,14 @@ function parsePorts(portsStr, vlanId, portVlans) {
 
 /**
  * Standard command set for tracking found/missing.
+ * "interfaces description" and "interfaces status" are alternatives — either satisfies enrichment.
  */
 const STANDARD_COMMANDS = [
   'mac address-table',
   'interfaces description',
+  'interfaces status',
   'cdp neighbors',
+  'lldp neighbors',
   'vlan',
 ];
 
@@ -446,7 +651,9 @@ export function parseTerminalOutput(rawText) {
     macFormat: 'unknown',
     macErrors: [],
     interfaceDesc: null,
+    interfaceStatus: null,
     cdpNeighbors: null,
+    lldpNeighbors: null,
     vlanData: null,
     hostname: null,
     commandsFound: [],
@@ -484,8 +691,20 @@ export function parseTerminalOutput(rawText) {
         macFound = true;
       } else if (cmd.includes('interfaces description')) {
         result.interfaceDesc = parseInterfaceDescription(block.text);
+      } else if (cmd.includes('interfaces status')) {
+        result.interfaceStatus = parseInterfaceStatus(block.text);
+        // Also populate interfaceDesc from status data for backward compatibility
+        if (!result.interfaceDesc) {
+          result.interfaceDesc = result.interfaceStatus.descriptions;
+        }
       } else if (cmd.includes('cdp neighbors')) {
         result.cdpNeighbors = parseCdpNeighbors(block.text);
+      } else if (cmd.includes('lldp neighbors')) {
+        result.lldpNeighbors = parseLldpNeighbors(block.text);
+        // Also populate cdpNeighbors from LLDP for backward compatibility
+        if (!result.cdpNeighbors) {
+          result.cdpNeighbors = result.lldpNeighbors;
+        }
       } else if (cmd.startsWith('vlan')) {
         result.vlanData = parseVlan(block.text);
       }
@@ -495,8 +714,11 @@ export function parseTerminalOutput(rawText) {
     }
   }
 
-  // If MAC table block not found among blocks, try entire text as fallback
-  if (!macFound) {
+  // If MAC table block not found among recognized blocks, try entire text as fallback.
+  // Only do this if we found very few blocks (likely a MAC-only paste with stray prompts).
+  // In multi-command mode with several blocks, a missing MAC table is intentional — don't
+  // pollute macErrors by parsing the whole dump (running config, version, etc.).
+  if (!macFound && blocks.length <= 1) {
     try {
       const mac = parseMacTable(rawText);
       result.macEntries = mac.entries;
@@ -512,7 +734,9 @@ export function parseTerminalOutput(rawText) {
   const foundSet = new Set();
   if (macFound) foundSet.add('mac address-table');
   if (result.interfaceDesc !== null) foundSet.add('interfaces description');
+  if (result.interfaceStatus !== null) foundSet.add('interfaces status');
   if (result.cdpNeighbors !== null) foundSet.add('cdp neighbors');
+  if (result.lldpNeighbors !== null) foundSet.add('lldp neighbors');
   if (result.vlanData !== null) foundSet.add('vlan');
 
   result.commandsFound = STANDARD_COMMANDS.filter(c => foundSet.has(c));

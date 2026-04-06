@@ -1,0 +1,453 @@
+
+*********************** WARNING ***********************
+
+YOU HAVE REACHED A PRIVATE COMPUTER NETWORK, WHICH
+MAY NOT BE ACCESSED, USED, OR MODIFIED WITHOUT EXPLICIT
+WRITTEN, CURRENT, AUTHORIZED BY THIS ORGANIZATION.
+
+UNAUTHORIZED OR ATTEMPT TO UNAUTHORIZED ACCESS, USE,
+COPYING, ALTERATION, DESTRUCTION OR DAMAGE TO ITS DATA,
+PROGRAMS OR EQUIPMENT MAY VIOLATE THE APPLICABLE LAWS
+AND WILL RESULT IN PROSECUTION OR CIVIL LIBILITY OR BOTH.
+
+BY USING THIS SYSTEM YOU CONSENT TO YOUR ACTIONS BEING
+RECORDED AND MONITORED.  FURTHERMORE, YOU ARE ADVISED
+THAT CRIMINAL PROSECUTION MAY RESULT IF SUCH MONITORING
+REVEALS EVIDENCE OF POSSIBLE ABUSE OR CRIMINAL ACTIVITY.
+
+*********************** WARNING ***********************
+
+YOU HAVE REACHED A PRIVATE COMPUTER NETWORK, WHICH
+MAY NOT BE ACCESSED, USED, OR MODIFIED WITHOUT EXPLICIT
+WRITTEN, CURRENT, AUTHORIZED BY THIS ORGANIZATION.
+
+UNAUTHORIZED OR ATTEMPT TO UNAUTHORIZED ACCESS, USE,
+COPYING, ALTERATION, DESTRUCTION OR DAMAGE TO ITS DATA,
+PROGRAMS OR EQUIPMENT MAY VIOLATE THE APPLICABLE LAWS
+AND WILL RESULT IN PROSECUTION OR CIVIL LIBILITY OR BOTH.
+
+BY USING THIS SYSTEM YOU CONSENT TO YOUR ACTIONS BEING
+RECORDED AND MONITORED.  FURTHERMORE, YOU ARE ADVISED
+THAT CRIMINAL PROSECUTION MAY RESULT IF SUCH MONITORING
+REVEALS EVIDENCE OF POSSIBLE ABUSE OR CRIMINAL ACTIVITY.
+
+houstnnswan26 line 2 
+
+houstnnswan26#show mac ad
+houstnnswan26#show mac address-table 
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+ All    0100.0ccc.cccc    STATIC      CPU
+ All    0100.0ccc.cccd    STATIC      CPU
+ All    0180.c200.0000    STATIC      CPU
+ All    0180.c200.0001    STATIC      CPU
+ All    0180.c200.0002    STATIC      CPU
+ All    0180.c200.0003    STATIC      CPU
+ All    0180.c200.0004    STATIC      CPU
+ All    0180.c200.0005    STATIC      CPU
+ All    0180.c200.0006    STATIC      CPU
+ All    0180.c200.0007    STATIC      CPU
+ All    0180.c200.0008    STATIC      CPU
+ All    0180.c200.0009    STATIC      CPU
+ All    0180.c200.000a    STATIC      CPU
+ All    0180.c200.000b    STATIC      CPU
+ All    0180.c200.000c    STATIC      CPU
+ All    0180.c200.000d    STATIC      CPU
+ All    0180.c200.000e    STATIC      CPU
+ All    0180.c200.000f    STATIC      CPU
+ All    0180.c200.0010    STATIC      CPU
+ All    0180.c200.0021    STATIC      CPU
+ All    ffff.ffff.ffff    STATIC      CPU
+   1    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+   1    40f4.9f2c.ee0b    DYNAMIC     Te1/1/3
+   1    648f.3ecd.f40b    DYNAMIC     Te1/1/3
+   1    9ca9.b842.970b    DYNAMIC     Te1/1/3
+  25    0001.5802.6e22    DYNAMIC     Te1/1/3
+  25    0005.1b97.a24d    DYNAMIC     Te1/1/3
+  25    0050.56ae.afc9    DYNAMIC     Te1/1/3
+  25    0050.56ae.c689    DYNAMIC     Te1/1/3
+  25    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+  25    28c5.c804.28ad    DYNAMIC     Te1/1/3
+  25    4874.10ce.0b14    DYNAMIC     Te1/1/3
+  25    a033.4f39.0bf1    STATIC      Vl25 
+  25    ac91.a1a0.4ef4    DYNAMIC     Te1/1/3
+  25    d4a2.cd31.1afb    DYNAMIC     Te1/1/3
+  25    dcfe.070c.957d    DYNAMIC     Te1/1/3
+  25    dcfe.070c.957f    DYNAMIC     Te1/1/3
+  25    f8a2.6df2.eae3    DYNAMIC     Te1/1/3
+  95    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+  95    4874.10ce.0b14    DYNAMIC     Te1/1/3
+  95    700b.4f79.b641    DYNAMIC     Te1/1/3
+  95    7864.a090.0dcb    DYNAMIC     Te1/1/3
+  95    7864.a093.7fcb    DYNAMIC     Te1/1/3
+  95    7864.a09b.704b    DYNAMIC     Te1/1/3
+  95    7864.a09e.cfcb    DYNAMIC     Te1/1/3
+  95    90eb.5091.6e8b    DYNAMIC     Te1/1/3
+  95    a033.4f39.0bd0    STATIC      Vl95 
+  95    a0c7.d286.3795    DYNAMIC     Te1/1/3
+  95    a0c7.d28b.9a15    DYNAMIC     Te1/1/3
+  95    d478.9b93.f441    DYNAMIC     Te1/1/3
+ 125    0000.bc20.689a    DYNAMIC     Te1/1/3
+ 125    0009.9101.164e    DYNAMIC     Te1/1/3
+ 125    0009.9101.7e28    DYNAMIC     Te1/1/3
+ 125    0009.9101.9084    DYNAMIC     Te1/1/3
+ 125    0009.9101.edbc    DYNAMIC     Te1/1/3
+ 125    0009.9102.4d20    DYNAMIC     Te1/1/3
+ 125    0009.9102.94b1    DYNAMIC     Te1/1/3
+ 125    0009.9102.94fe    DYNAMIC     Te1/1/3
+ 125    0009.9103.2255    DYNAMIC     Te1/1/3
+ 125    0009.9103.76ca    DYNAMIC     Te1/1/3
+ 125    0009.9104.096e    DYNAMIC     Te1/1/3
+ 125    0009.9104.0988    DYNAMIC     Te1/1/3
+ 125    0009.9104.67b1    DYNAMIC     Te1/1/3
+ 125    0009.9104.6901    DYNAMIC     Te1/1/3
+ 125    0009.9105.2b45    DYNAMIC     Te1/1/3
+ 125    0009.9107.6d97    DYNAMIC     Te1/1/3
+ 125    0009.9107.6d9c    DYNAMIC     Te1/1/3
+ 125    0009.9107.6d9d    DYNAMIC     Te1/1/3
+ 125    0009.9107.ccfd    DYNAMIC     Te1/1/3
+ 125    0009.9107.e5e3    DYNAMIC     Te1/1/3
+ 125    0009.9108.39ad    DYNAMIC     Te1/1/3
+ 125    0009.9144.2b6d    DYNAMIC     Te1/1/3
+ 125    0009.9144.2dc9    DYNAMIC     Te1/1/3
+ 125    0009.9144.2e58    DYNAMIC     Te1/1/3
+ 125    0014.3e40.b7bd    DYNAMIC     Te1/1/3
+ 125    0040.9d3d.7737    DYNAMIC     Te1/1/3
+ 125    0040.9d6b.91b3    DYNAMIC     Te1/1/3
+ 125    0040.9de6.06f6    DYNAMIC     Te1/1/3
+ 125    0050.56ae.6d31    DYNAMIC     Te1/1/3
+ 125    0050.56ae.8ef0    DYNAMIC     Te1/1/3
+ 125    0080.440d.b4ee    DYNAMIC     Te1/1/3
+ 125    0080.440d.b4f1    DYNAMIC     Te1/1/3
+ 125    0080.440d.c5b1    DYNAMIC     Te1/1/3
+ 125    0080.440e.2b7d    DYNAMIC     Te1/1/3
+ 125    0080.440e.31f9    DYNAMIC     Te1/1/3
+ 125    0080.440e.5ead    DYNAMIC     Te1/1/3
+ 125    0080.4412.7eb5    DYNAMIC     Te1/1/3
+ 125    0080.4413.db7b    DYNAMIC     Te1/1/3
+ 125    0090.c2d3.223a    DYNAMIC     Te1/1/3
+ 125    0090.c2d3.2247    DYNAMIC     Te1/1/3
+ 125    0090.c2de.08d7    DYNAMIC     Te1/1/3
+ 125    0090.c2e3.9a04    DYNAMIC     Te1/1/3
+ 125    0090.c2e4.4745    DYNAMIC     Te1/1/3
+ 125    0090.c2e7.e71a    DYNAMIC     Te1/1/3
+ 125    0090.c2eb.feda    DYNAMIC     Te1/1/3
+ 125    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+ 125    00c0.330c.c6b9    DYNAMIC     Te1/1/3
+ 125    00c0.330e.037e    DYNAMIC     Te1/1/3
+ 125    00c0.3310.7501    DYNAMIC     Te1/1/3
+ 125    00c0.3314.9845    DYNAMIC     Te1/1/3
+ 125    088f.c39d.cac2    DYNAMIC     Te1/1/3
+ 125    088f.c39d.cac4    DYNAMIC     Te1/1/3
+ 125    1860.24c4.92d4    DYNAMIC     Te1/1/3
+ 125    2088.10eb.ea66    DYNAMIC     Te1/1/3
+ 125    3c52.827b.97db    DYNAMIC     Te1/1/3
+ 125    506b.8d02.536b    DYNAMIC     Te1/1/3
+ 125    506b.8d07.388b    DYNAMIC     Te1/1/3
+ 125    506b.8d89.67ea    DYNAMIC     Te1/1/3
+ 125    506b.8db4.6034    DYNAMIC     Te1/1/3
+ 125    506b.8de3.05a3    DYNAMIC     Te1/1/3
+ 125    7486.e21b.74fa    DYNAMIC     Te1/1/3
+ 125    7486.e21b.75dc    DYNAMIC     Te1/1/3
+ 125    7864.a090.0dcb    DYNAMIC     Te1/1/3
+ 125    7864.a093.7fcb    DYNAMIC     Te1/1/3
+ 125    7864.a09b.704b    DYNAMIC     Te1/1/3
+ 125    7864.a09e.cfcb    DYNAMIC     Te1/1/3
+ 125    7c8a.e1d0.a886    DYNAMIC     Te1/1/3
+ 125    7c8a.e1d0.a888    DYNAMIC     Te1/1/3
+ 125    84a9.3e8e.da2a    DYNAMIC     Te1/1/3
+ 125    90eb.5091.6e8b    DYNAMIC     Te1/1/3
+ 125    9c5a.4402.938c    DYNAMIC     Te1/1/3
+ 125    9c5a.4402.938e    DYNAMIC     Te1/1/3
+ 125    a033.4f39.0bf2    STATIC      Vl125 
+ 125    a0c7.d28b.9a15    DYNAMIC     Te1/1/3
+ 125    cc96.e52a.342e    DYNAMIC     Te1/1/3
+ 125    cc96.e52a.3940    DYNAMIC     Te1/1/3
+ 125    cc96.e52a.3e50    DYNAMIC     Te1/1/3
+ 125    cc96.e52a.3eab    DYNAMIC     Te1/1/3
+ 125    e8cf.8326.7f6c    DYNAMIC     Te1/1/3
+  10    0011.0c2a.6b6f    DYNAMIC     Te1/1/3
+  10    0030.d338.3160    DYNAMIC     Te1/1/3
+  10    0080.a3fd.b693    DYNAMIC     Te1/1/3
+  10    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+  10    84a9.3e68.f7a0    DYNAMIC     Te1/1/3
+  10    b827.eba3.2322    DYNAMIC     Te1/1/3
+  10    b827.ebc1.76e4    DYNAMIC     Te1/1/3
+  20    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+  20    6849.9231.c200    DYNAMIC     Te1/1/3
+  20    6849.9231.c910    DYNAMIC     Te1/1/3
+  30    0022.ee0c.0757    DYNAMIC     Te1/1/3
+  30    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+  30    4874.10ce.0b14    DYNAMIC     Te1/1/3
+  30    f09e.630f.6db3    DYNAMIC     Te1/1/3
+  35    0001.4a2f.b0c8    STATIC      Gi1/0/1 
+  35    0009.185b.fbff    DYNAMIC     Te1/1/3
+  35    0040.8ca2.742e    DYNAMIC     Te1/1/3
+  35    0040.8ca2.7430    DYNAMIC     Te1/1/3
+  35    0040.8ca2.7434    DYNAMIC     Te1/1/3
+  35    0040.8ca2.7435    DYNAMIC     Te1/1/3
+  35    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+  35    4874.10ce.0b14    DYNAMIC     Te1/1/3
+  35    7864.a090.0dc1    DYNAMIC     Te1/1/3
+  35    7864.a093.7fc1    DYNAMIC     Te1/1/3
+  35    7864.a09b.7041    DYNAMIC     Te1/1/3
+  35    7864.a09e.cfc1    DYNAMIC     Te1/1/3
+  35    90eb.5091.6e81    DYNAMIC     Te1/1/3
+  35    94db.5632.98db    DYNAMIC     Te1/1/3
+  35    9829.a6fa.f8bc    DYNAMIC     Te1/1/3
+  35    a0c7.d286.3781    DYNAMIC     Te1/1/3
+  35    a0c7.d28b.9a01    DYNAMIC     Te1/1/3
+  35    b8a4.4fbe.045c    DYNAMIC     Te1/1/3
+  35    e430.2223.91de    DYNAMIC     Te1/1/3
+  35    e430.2223.91e1    DYNAMIC     Te1/1/3
+  35    e430.222f.c4f5    DYNAMIC     Te1/1/3
+  35    e430.2260.11e6    DYNAMIC     Te1/1/3
+  35    e430.2260.11e7    DYNAMIC     Te1/1/3
+  35    e827.2505.96a2    DYNAMIC     Te1/1/3
+  35    fcf1.52a7.790c    DYNAMIC     Te1/1/3
+  40    0023.0f00.ec29    STATIC      Gi1/0/3 
+  40    0023.0f00.f056    DYNAMIC     Te1/1/3
+  40    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+  40    4874.10ce.0b14    DYNAMIC     Te1/1/3
+  40    7864.a090.0dc1    DYNAMIC     Te1/1/3
+  40    7864.a093.7fc1    DYNAMIC     Te1/1/3
+  40    7864.a09b.7041    DYNAMIC     Te1/1/3
+  40    7864.a09e.cfc1    DYNAMIC     Te1/1/3
+  40    90eb.5091.6e81    DYNAMIC     Te1/1/3
+  40    a0c7.d286.3781    DYNAMIC     Te1/1/3
+  69    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+  79    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+ 135    0001.5800.72d7    DYNAMIC     Te1/1/3
+ 135    0009.9101.9073    DYNAMIC     Te1/1/3
+ 135    0009.9101.b6ca    DYNAMIC     Te1/1/3
+ 135    0009.9102.c6cf    DYNAMIC     Te1/1/3
+ 135    0009.9103.5993    DYNAMIC     Te1/1/3
+ 135    0014.3e40.b87b    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.a359    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.a39e    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.a485    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.b399    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.c8fd    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.c926    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.c9ae    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.ca34    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.ca53    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.d2d5    DYNAMIC     Te1/1/3
+ 135    0020.4a0b.e912    DYNAMIC     Te1/1/3
+ 135    0020.4a11.e2aa    DYNAMIC     Te1/1/3
+ 135    0020.4a13.d1e2    DYNAMIC     Te1/1/3
+ 135    0020.4a21.e13c    DYNAMIC     Te1/1/3
+ 135    0040.9d50.0dc5    DYNAMIC     Te1/1/3
+ 135    0040.9de6.0700    DYNAMIC     Te1/1/3
+ 135    0080.440e.2b48    DYNAMIC     Te1/1/3
+ 135    0080.440e.5d44    DYNAMIC     Te1/1/3
+ 135    0090.c2f5.f5fc    DYNAMIC     Te1/1/3
+ 135    0090.c2f5.f691    DYNAMIC     Te1/1/3
+ 135    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+ 135    4874.10ce.0b14    DYNAMIC     Te1/1/3
+ 135    7864.a090.0dc1    DYNAMIC     Te1/1/3
+ 135    7864.a093.7fc1    DYNAMIC     Te1/1/3
+ 135    7864.a09b.7041    DYNAMIC     Te1/1/3
+ 135    7864.a09e.cfc1    DYNAMIC     Te1/1/3
+ 135    7c8a.e1d1.0b7e    DYNAMIC     Te1/1/3
+ 135    7c8a.e1d1.0b80    DYNAMIC     Te1/1/3
+ 135    90eb.5091.6e81    DYNAMIC     Te1/1/3
+ 135    a0c7.d286.3781    DYNAMIC     Te1/1/3
+ 135    a0c7.d28b.9a01    DYNAMIC     Te1/1/3
+ 135    dc37.520b.362c    DYNAMIC     Te1/1/3
+ 135    dc37.520b.8e17    DYNAMIC     Te1/1/3
+ 135    dc37.520b.9599    DYNAMIC     Te1/1/3
+ 175    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+ 225    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+ 145    0001.5800.9628    DYNAMIC     Te1/1/3
+ 145    0006.4804.1b37    DYNAMIC     Te1/1/3
+ 145    0009.9104.10ee    DYNAMIC     Te1/1/3
+ 145    0009.910a.a2c7    DYNAMIC     Te1/1/3
+ 145    0009.9143.ad15    STATIC      Gi1/0/12 
+ 145    0009.9143.ad16    STATIC      Gi1/0/12 
+ 145    0020.4a0b.af35    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.b34c    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.b3b3    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.b3c0    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.c03f    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.e74a    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.e77c    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.e79a    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.fe8e    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.ff1b    DYNAMIC     Te1/1/3
+ 145    0020.4a0b.ff2a    DYNAMIC     Te1/1/3
+ 145    0020.4a11.c7b1    DYNAMIC     Te1/1/3
+ 145    0020.4a11.c7b2    DYNAMIC     Te1/1/3
+ 145    0020.4a11.c825    DYNAMIC     Te1/1/3
+ 145    0020.4a11.d732    DYNAMIC     Te1/1/3
+ 145    0020.4a11.d73f    DYNAMIC     Te1/1/3
+ 145    0020.4a11.d781    DYNAMIC     Te1/1/3
+ 145    0020.4a11.d78e    DYNAMIC     Te1/1/3
+ 145    0020.4a13.de7d    DYNAMIC     Te1/1/3
+ 145    0020.4a13.de84    DYNAMIC     Te1/1/3
+ 145    0020.4a21.9b2e    DYNAMIC     Te1/1/3
+ 145    0020.4a21.9beb    DYNAMIC     Te1/1/3
+ 145    0020.4a21.b136    DYNAMIC     Te1/1/3
+ 145    0020.4a21.b7d0    DYNAMIC     Te1/1/3
+ 145    0020.4a21.b7fa    DYNAMIC     Te1/1/3
+ 145    0020.4a21.cf76    DYNAMIC     Te1/1/3
+ 145    0020.4a21.e120    DYNAMIC     Te1/1/3
+ 145    0020.4a22.8066    DYNAMIC     Te1/1/3
+ 145    0020.4a22.8092    DYNAMIC     Te1/1/3
+ 145    0020.4a22.80d7    DYNAMIC     Te1/1/3
+ 145    0040.9dd2.5a73    DYNAMIC     Te1/1/3
+ 145    00a0.f40b.55d8    DYNAMIC     Te1/1/3
+ 145    00a0.f40b.579f    DYNAMIC     Te1/1/3
+ 145    00a0.f40b.57a2    DYNAMIC     Te1/1/3
+ 145    00a5.bfd0.0d88    DYNAMIC     Te1/1/3
+ 145    00c0.3312.7b38    DYNAMIC     Te1/1/3
+ 145    00c0.33f8.17b1    DYNAMIC     Te1/1/3
+ 145    28a3.31fe.3ca7    DYNAMIC     Te1/1/3
+ 145    4874.10ce.0b14    DYNAMIC     Te1/1/3
+ 145    7864.a090.0dc1    DYNAMIC     Te1/1/3
+ 145    90eb.5091.6e81    DYNAMIC     Te1/1/3
+ 145    a0c7.d28b.9a01    DYNAMIC     Te1/1/3
+ 145    dc37.520b.35d8    DYNAMIC     Te1/1/3
+ 145    dc37.520b.35e8    DYNAMIC     Te1/1/3
+ 145    dc37.520b.38cb    DYNAMIC     Te1/1/3
+ 145    dc37.520b.eeb2    DYNAMIC     Te1/1/3
+Total Mac Addresses for this criterion: 274
+houstnnswan26#show inter
+houstnnswan26#show interfaces des
+houstnnswan26#show interfaces description 
+Interface                      Status         Protocol Description
+Vl1                            admin down     down     
+Vl25                           up             up       Business LAN
+Vl95                           up             up       Network Management LAN
+Vl125                          up             up       Controls LAN
+Gi1/0/1                        up             up       Video Camera
+Gi1/0/2                        down           down     
+Gi1/0/3                        up             up       West_Gate_CPAM.21
+Gi1/0/4                        down           down     
+Gi1/0/5                        down           down     
+Gi1/0/6                        down           down     
+Gi1/0/7                        down           down     
+Gi1/0/8                        down           down     
+Gi1/0/9                        down           down     
+Gi1/0/10                       down           down     
+Gi1/0/11                       down           down     
+Gi1/0/12                       up             up       GateOpnr_PNS.53
+Gi1/1/1                        down           down     GateOpnr_PNS.53
+Gi1/1/2                        admin down     down     
+Te1/1/3                        up             up       houstnnscore01-2/0/8
+Te1/1/4                        admin down     down     
+Gi1/1/5                        admin down     down     
+houstnnswan26#show vlan
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/1/1
+10   NAC_UNTRUSTED                    active    
+20   WIRELESS                         active    
+25   DATA                             active    Gi1/0/4, Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8, Gi1/0/9, Gi1/0/10, Gi1/0/11, Gi1/1/2, Te1/1/4
+                                                Gi1/1/5
+30   VOICE                            active    Gi1/0/1, Gi1/0/2, Gi1/0/3, Gi1/0/4, Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8, Gi1/0/9, Gi1/0/10
+                                                Gi1/0/11
+35   VIDEO                            active    Gi1/0/1
+40   SECURITY                         active    Gi1/0/2, Gi1/0/3
+69   NULL                             active    
+79   VSE_unroutedLAN                  active    
+95   NetMgmt                          active    
+125  CONTROLS                         active    
+135  CRUDE_CONTROLS                   active    
+145  GATE                             active    
+175  VSE                              active    
+225  VSAT                             active    
+1002 fddi-default                     act/unsup 
+1003 trcrf-default                    act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trbrf-default                    act/unsup 
+
+VLAN Type  SAID       MTU   Parent RingNo BridgeNo Stp  BrdgMode Trans1 Trans2
+---- ----- ---------- ----- ------ ------ -------- ---- -------- ------ ------
+1    enet  100001     1500  -      -      -        -    -        0      0   
+10   enet  100010     1500  -      -      -        -    -        0      0   
+20   enet  100020     1500  -      -      -        -    -        0      0   
+25   enet  100025     1500  -      -      -        -    -        0      0   
+30   enet  100030     1500  -      -      -        -    -        0      0   
+35   enet  100035     1500  -      -      -        -    -        0      0   
+40   enet  100040     1500  -      -      -        -    -        0      0   
+69   enet  100069     1500  -      -      -        -    -        0      0   
+79   enet  100079     1500  -      -      -        -    -        0      0   
+95   enet  100095     1500  -      -      -        -    -        0      0   
+125  enet  100125     1500  -      -      -        -    -        0      0   
+135  enet  100135     1500  -      -      -        -    -        0      0   
+145  enet  100145     1500  -      -      -        -    -        0      0   
+175  enet  100175     1500  -      -      -        -    -        0      0   
+225  enet  100225     1500  -      -      -        -    -        0      0   
+1002 fddi  101002     1500  -      -      -        -    -        0      0   
+1003 trcrf 101003     4472  1005   3276   -        -    srb      0      0   
+1004 fdnet 101004     1500  -      -      -        ieee -        0      0   
+1005 trbrf 101005     4472  -      -      15       ibm  -        0      0   
+
+
+VLAN AREHops STEHops Backup CRF
+---- ------- ------- ----------
+1003 7       7       off
+
+Remote SPAN VLANs
+------------------------------------------------------------------------------
+
+          
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+
+Primary Secondary Type              Ports
+------- --------- ----------------- ------------------------------------------
+
+houstnnswan26#show cdp neigh
+houstnnswan26#show cdp neighbors 
+Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port Mac Relay 
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+houstnnscore01.mmplp.net
+                 Ten 1/1/3         168              S I   WS-C3850- Gig 2/0/8
+
+Total cdp entries displayed : 1
+houstnnswan26#show lldp
+houstnnswan26#show lldp neigh
+houstnnswan26#show lldp neighbors 
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID           Local Intf     Hold-time  Capability      Port ID
+west-gate-pns.53    Gi1/0/12       20                         port-001
+houstnnscore01.mmplpTe1/1/3        120        B               Gi2/0/8
+
+Total entries displayed: 2
+
+houstnnswan26#show ip int brief
+Interface              IP-Address      OK? Method Status                Protocol
+Vlan1                  unassigned      YES NVRAM  administratively down down    
+Vlan25                 10.25.97.213    YES NVRAM  up                    up      
+Vlan95                 10.95.97.126    YES NVRAM  up                    up      
+Vlan125                10.125.97.137   YES NVRAM  up                    up      
+GigabitEthernet1/0/1   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/2   unassigned      YES unset  down                  down    
+GigabitEthernet1/0/3   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/4   unassigned      YES unset  down                  down    
+GigabitEthernet1/0/5   unassigned      YES unset  down                  down    
+GigabitEthernet1/0/6   unassigned      YES unset  down                  down    
+GigabitEthernet1/0/7   unassigned      YES unset  down                  down    
+GigabitEthernet1/0/8   unassigned      YES unset  down                  down    
+GigabitEthernet1/0/9   unassigned      YES unset  down                  down    
+GigabitEthernet1/0/10  unassigned      YES unset  down                  down    
+GigabitEthernet1/0/11  unassigned      YES unset  down                  down    
+GigabitEthernet1/0/12  unassigned      YES unset  up                    up      
+GigabitEthernet1/1/1   unassigned      YES unset  down                  down    
+GigabitEthernet1/1/2   unassigned      YES unset  administratively down down    
+Te1/1/3                unassigned      YES unset  up                    up      
+Te1/1/4                unassigned      YES unset  administratively down down    
+GigabitEthernet1/1/5   unassigned      YES unset  administratively down down    
+houstnnswan26# 
