@@ -286,6 +286,53 @@ function updatePillStyles() {
   });
 }
 
+// --- File drop ---
+
+function setupFileDrop(textarea) {
+  textarea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  textarea.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    textarea.classList.add('drag-over');
+  });
+
+  textarea.addEventListener('dragleave', () => {
+    textarea.classList.remove('drag-over');
+  });
+
+  textarea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    textarea.classList.remove('drag-over');
+    clearMessages();
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    const name = file.name.toLowerCase();
+    if (!name.endsWith('.txt') && !name.endsWith('.md')) {
+      showMessage('error', 'Only .txt and .md files are supported.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      showMessage('error', 'File too large. Maximum size is 5MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      textarea.value = reader.result;
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    reader.onerror = () => { showMessage('error', 'Could not read file.'); };
+    reader.readAsText(file);
+  });
+}
+
 // --- Main ---
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -307,6 +354,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('trmc-theme', next);
   });
+
+  // Prevent file drops outside textareas from navigating away
+  window.addEventListener('dragover', (e) => e.preventDefault());
+  window.addEventListener('drop', (e) => e.preventDefault());
+
+  setupFileDrop(beforeInput);
+  setupFileDrop(afterInput);
 
   compareBtn.addEventListener('click', () => {
     clearMessages();
