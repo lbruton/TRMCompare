@@ -213,10 +213,10 @@ main { padding: 1.5rem 2rem; }
 .input-panel textarea::placeholder { color: var(--text-muted); opacity: 0.5; }
 .input-panel textarea.drag-over {
   border: 2px dashed var(--accent);
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(0, 180, 216, 0.05);
 }
 [data-theme="light"] .input-panel textarea.drag-over {
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(0, 119, 168, 0.1);
 }
 
 /* ═══ Compare button ═══ */

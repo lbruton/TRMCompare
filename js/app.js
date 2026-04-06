@@ -307,6 +307,7 @@ function setupFileDrop(textarea) {
     e.preventDefault();
     e.stopPropagation();
     textarea.classList.remove('drag-over');
+    clearMessages();
 
     const file = e.dataTransfer.files[0];
     if (!file) return;
@@ -322,10 +323,11 @@ function setupFileDrop(textarea) {
       return;
     }
 
-    clearMessages();
-
     const reader = new FileReader();
-    reader.onload = () => { textarea.value = reader.result; };
+    reader.onload = () => {
+      textarea.value = reader.result;
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    };
     reader.onerror = () => { showMessage('error', 'Could not read file.'); };
     reader.readAsText(file);
   });
@@ -352,6 +354,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('trmc-theme', next);
   });
+
+  // Prevent file drops outside textareas from navigating away
+  window.addEventListener('dragover', (e) => e.preventDefault());
+  window.addEventListener('drop', (e) => e.preventDefault());
 
   setupFileDrop(beforeInput);
   setupFileDrop(afterInput);
