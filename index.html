@@ -50,7 +50,7 @@
         <span class="step-number">1</span>
         <div>
           <strong>Capture</strong>
-          <p>Run these on each switch:</p>
+          <p>Run these on each switch — save the output before and after the swap:</p>
           <code>show mac address-table</code>
           <code class="optional">show interfaces description</code>
           <code class="optional">show cdp neighbors</code>
@@ -62,7 +62,7 @@
         <span class="step-number">2</span>
         <div>
           <strong>Paste</strong>
-          <p>Copy the full terminal output from each switch into the panels below. Multi-command paste supported.</p>
+          <p>Paste your saved terminal output into each panel below. Multi-command paste supported.</p>
         </div>
       </div>
       <div class="step-card">
@@ -77,16 +77,16 @@
     <div class="input-grid">
       <div class="input-panel">
         <label for="before-input">Old Switch</label>
-        <textarea id="before-input" rows="12" placeholder="Paste terminal output from the OLD switch here...
+        <textarea id="before-input" rows="12" placeholder="Paste your saved capture from the old switch here...
 
-Supports full terminal paste with multiple show commands,
+Captured before the swap. Supports multiple show commands,
 or just 'show mac address-table' output on its own."></textarea>
       </div>
       <div class="input-panel">
         <label for="after-input">New Switch</label>
-        <textarea id="after-input" rows="12" placeholder="Paste terminal output from the NEW switch here...
+        <textarea id="after-input" rows="12" placeholder="Paste terminal output from the new switch here...
 
-Same format as the old switch. The tool auto-detects
+Captured after the swap. The tool auto-detects
 IOS, IOS-XE, and NX-OS output formats."></textarea>
       </div>
     </div>
