@@ -110,6 +110,14 @@ export function parseMacTable(rawText) {
   return { entries, format, errors };
 }
 
+// --- Shared patterns ---
+
+/**
+ * Port-like pattern fragment for matching Cisco interface names with optional spaces.
+ * e.g. "Gig 1/0/1", "Fas 0/1", "Ten 1/0/1", "Eth1/1", "GigabitEthernet0/0"
+ */
+const PORT_PATTERN = /(?:Gig(?:abitEthernet)?|Fas(?:tEthernet)?|Ten(?:GigabitEthernet)?|Eth(?:ernet)?|Twe(?:ntyFiveGigE)?|Po(?:rt-channel)?|Gi|Te|Fa)\s*[\d/]+/i;
+
 // --- Port normalization ---
 
 /**
@@ -160,7 +168,8 @@ const PROMPT_RE = /^(\S+)[#>]sh(?:ow)?\s+(.+)$/;
 
 /**
  * Abbreviation map: maps common abbreviated command forms to their canonical form.
- * Checked before RECOGNIZED_COMMANDS matching. Order: most specific first.
+ * Falls back to RECOGNIZED_COMMANDS for exact matches not listed here.
+ * Order: most specific first.
  */
 const COMMAND_ALIASES = [
   // MAC address table
@@ -195,6 +204,10 @@ function resolveCommand(showArgs) {
   const lower = showArgs.toLowerCase();
   for (const [abbrev, canonical] of COMMAND_ALIASES) {
     if (lower.startsWith(abbrev)) return canonical;
+  }
+  // Fallback: check if it exactly matches a recognized command not in COMMAND_ALIASES
+  for (const cmd of RECOGNIZED_COMMANDS) {
+    if (lower.startsWith(cmd)) return cmd;
   }
   return null;
 }
@@ -312,7 +325,7 @@ export function parseInterfaceDescription(text) {
  *
  * @param {string} text - Raw command output
  * @returns {{ descriptions: Map<string, { status: string, protocol: string, description: string }>,
- *             portVlans: Map<string, number|'trunk'> }}
+ *             portVlans: Map<string, number|'trunk'|'routed'> }}
  */
 export function parseInterfaceStatus(text) {
   const descriptions = new Map();
@@ -391,10 +404,6 @@ export function parseCdpNeighbors(text) {
   if (!text) return result;
 
   const lines = text.split('\n');
-
-  // Port-like pattern fragment for matching interface names with optional spaces
-  // e.g. "Gig 1/0/1", "Fas 0/1", "Ten 1/0/1", "Eth1/1", "GigabitEthernet0/0"
-  const PORT_PATTERN = /(?:Gig(?:abitEthernet)?|Fas(?:tEthernet)?|Ten(?:GigabitEthernet)?|Eth(?:ernet)?|Twe(?:ntyFiveGigE)?|Po(?:rt-channel)?)\s*[\d/]+/i;
 
   let pendingDeviceId = null;
 
@@ -482,7 +491,6 @@ export function parseLldpNeighbors(text) {
   if (!text) return result;
 
   const lines = text.split('\n');
-  const PORT_PATTERN = /(?:Gig(?:abitEthernet)?|Fas(?:tEthernet)?|Ten(?:GigabitEthernet)?|Eth(?:ernet)?|Twe(?:ntyFiveGigE)?|Po(?:rt-channel)?|Gi|Te|Fa)\s*[\d/]+/i;
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -509,8 +517,8 @@ export function parseLldpNeighbors(text) {
     const remainder = trimmed.substring(portStart + portMatch[0].length).trim();
     const parts = remainder.split(/\s+/);
 
-    // Last token is remote port ID
-    const remotePort = parts.length > 0 ? parts[parts.length - 1] : '';
+    // Last token is remote port ID — normalize for interchangeability with CDP output
+    const remotePort = parts.length > 0 ? normalizePort(parts[parts.length - 1]) : '';
 
     result.set(localPort, { deviceId, platform: 'LLDP', remotePort });
   }
@@ -730,14 +738,18 @@ export function parseTerminalOutput(rawText) {
     }
   }
 
-  // Build commandsFound / commandsMissing
+  // Build commandsFound / commandsMissing from actually-parsed blocks only
+  // (not from synthesized compat aliases like interfaceDesc from interfaceStatus)
   const foundSet = new Set();
   if (macFound) foundSet.add('mac address-table');
-  if (result.interfaceDesc !== null) foundSet.add('interfaces description');
-  if (result.interfaceStatus !== null) foundSet.add('interfaces status');
-  if (result.cdpNeighbors !== null) foundSet.add('cdp neighbors');
-  if (result.lldpNeighbors !== null) foundSet.add('lldp neighbors');
   if (result.vlanData !== null) foundSet.add('vlan');
+  for (const block of blocks) {
+    const cmd = block.command.toLowerCase();
+    if (cmd.includes('interfaces description')) foundSet.add('interfaces description');
+    if (cmd.includes('interfaces status')) foundSet.add('interfaces status');
+    if (cmd.includes('cdp neighbors')) foundSet.add('cdp neighbors');
+    if (cmd.includes('lldp neighbors')) foundSet.add('lldp neighbors');
+  }
 
   result.commandsFound = STANDARD_COMMANDS.filter(c => foundSet.has(c));
   result.commandsMissing = STANDARD_COMMANDS.filter(c => !foundSet.has(c));
