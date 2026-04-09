@@ -103,7 +103,7 @@
 
   <div class="container">
     <h2>Run It <span>Yourself</span></h2>
-    <p class="subtitle">TRMCompare is a static site. No server-side code, no database, no containers. Just files and a browser.</p>
+    <p class="subtitle">TRMCompare is a static site. No server-side code, no database. Just files and a browser. Pick the option that fits your environment.</p>
 
     <div class="bookmark-section">
       <h3>Quickest option: just bookmark it</h3>
@@ -147,6 +147,18 @@ python3 -m http.server 8080</pre>
       <p>If you have Node.js installed:</p>
       <pre>npx serve .</pre>
       <p>Or use any static file server: nginx, Apache, Caddy, IIS &mdash; just point it at the folder.</p>
+    </div>
+
+    <div class="method">
+      <div class="method-header">
+        <span class="method-badge method-badge-alt">Alternative</span>
+        <h3>Docker</h3>
+      </div>
+      <p>Run it as a container. Works with Docker, Podman, OpenShift, or any OCI runtime.</p>
+      <pre>docker build -t trmcompare .
+docker run -p 8080:8080 trmcompare</pre>
+      <p>Open <code>http://localhost:8080</code> in your browser.</p>
+      <p>The image is ~25 MB (nginx:alpine), runs as non-root (UID 1001), and listens on port 8080. Compatible with OpenShift's arbitrary UID policy out of the box.</p>
     </div>
 
     <div class="method">

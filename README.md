@@ -72,6 +72,15 @@ python3 -m http.server 8080
 
 ES modules require HTTP serving — `file://` won't work due to CORS.
 
+### Run with Docker
+
+```bash
+docker build -t trmcompare .
+docker run -p 8080:8080 trmcompare
+```
+
+The container is ~25 MB (nginx:alpine), runs as non-root, and listens on port 8080. Compatible with OpenShift, Podman, and any OCI runtime.
+
 ## How It Works
 
 ### 1. Capture

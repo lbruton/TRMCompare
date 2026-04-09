@@ -1,14 +1,8 @@
-# Exclude dev-only files from GitHub ZIP downloads (Download ZIP button)
-.claude/           export-ignore
-.spec-workflow/    export-ignore
+# Exclude dev/build files from GitHub ZIP downloads (Download ZIP button)
 .gitattributes     export-ignore
 .gitignore         export-ignore
+.dockerignore      export-ignore
 docs/              export-ignore
-CLAUDE.md          export-ignore
-tests/             export-ignore
-playwright.config.js export-ignore
-package.json       export-ignore
-package-lock.json  export-ignore
-node_modules/      export-ignore
-test-results/      export-ignore
-playwright-report/ export-ignore
+samples/           export-ignore
+Dockerfile         export-ignore
+nginx.conf         export-ignore
