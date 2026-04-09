@@ -1,7 +1,4 @@
-# OS
-.DS_Store
-
-# AI tooling (backed up via /backup-claude to Nextcloud)
+# AI tooling
 .claude/
 .agents/
 .specflow/
@@ -19,5 +16,19 @@ playwright.config.js
 package.json
 package-lock.json
 
-# Legacy
-.spec-workflow/
+# Git / docs
+.git/
+.gitignore
+.gitattributes
+docs/
+samples/
+README.md
+CHANGELOG.md
+LICENSE
+
+# OS
+.DS_Store
+
+# Docker
+Dockerfile
+.dockerignore
