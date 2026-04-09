@@ -1,0 +1,70 @@
+houstnnswan26#show interfaces status
+
+Port         Name               Status       Vlan       Duplex  Speed Type
+Gi1/0/1      Video Camera       connected    35         a-full  a-100 10/100/1000BaseTX
+Gi1/0/2                         notconnect   40           auto   auto 10/100/1000BaseTX
+Gi1/0/3                         connected    40         a-full a-1000 10/100/1000BaseTX
+Gi1/0/4                         notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/0/5                         notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/0/6                         notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/0/7                         notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/0/8                         notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/0/9                         notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/0/10                        notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/0/11                        notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/0/12                        notconnect   25           auto   auto 10/100/1000BaseTX
+Gi1/1/1      GateOpnr_PNS.53    connected    trunk      a-full  a-100 10/100/1000BaseTX
+Gi1/1/2                         disabled     25           auto   auto 10/100/1000BaseTX
+Te1/1/3      houstnnswan01-f1/0 connected    trunk        full   1000 1000BaseSX SFP
+Te1/1/4                         disabled     25           auto   auto unknown
+Gi1/1/5                         disabled     25           auto   auto 10/100/1000BaseTX
+houstnnswan26#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active
+10   NAC_UNTRUSTED                    active
+20   WIRELESS                         active
+25   DATA                             active    Gi1/0/4, Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8, Gi1/0/9, Gi1/0/10, Gi1/0/11, Gi1/0/12, Gi1/1/2, Te1/1/4, Gi1/1/5
+30   VOICE                            active    Gi1/0/1, Gi1/0/2, Gi1/0/3, Gi1/0/4, Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8, Gi1/0/9, Gi1/0/10, Gi1/0/11, Gi1/0/12
+35   VIDEO                            active    Gi1/0/1
+40   SECURITY                         active    Gi1/0/2, Gi1/0/3
+69   NULL                             active
+79   VSE_unroutedLAN                  active
+95   NetMgmt                          active
+125  CONTROLS                         active
+135  CRUDE_CONTROLS                   active
+145  GATE                             active
+175  VSE                              active
+225  VSAT                             active
+1002 fddi-default                     act/unsup
+1003 trcrf-default                    act/unsup
+1004 fddinet-default                  act/unsup
+1005 trbrf-default                    act/unsup
+houstnnswan26#show interfaces trunk
+
+Port           Mode             Encapsulation  Status        Native vlan
+Gi1/1/1        on               802.1q         trunking      145
+Te1/1/3        on               802.1q         trunking      1
+
+Port           Vlans allowed on trunk
+Gi1/1/1        145
+Te1/1/3        1-4094
+
+Port           Vlans allowed and active in management domain
+Gi1/1/1        145
+Te1/1/3        1,10,20,25,30,35,40,69,79,95,125,135,145,175,225
+
+Port           Vlans in spanning tree forwarding state and not pruned
+Gi1/1/1        145
+Te1/1/3        1,10,20,25,30,35,40,69,79,95,125,135,145,175,225
+houstnnswan26#show cdp neighbors
+Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,
+                  D - Remote, C - CVTA, M - Two-port Mac Relay
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+houstnnscore01.mmplp.net
+                 Ten 1/1/3         139              S I   WS-C3850- Gig 2/0/8
+
+Total cdp entries displayed : 1

@@ -61,6 +61,42 @@ function buildParseWarning(label, entryCount, errors) {
   return frag;
 }
 
+/**
+ * Build an informative error message when MAC table data is missing.
+ * Lists which commands were detected to help users understand what's in their paste.
+ */
+function buildMissingMacError(label, parsed) {
+  const frag = document.createDocumentFragment();
+
+  const title = document.createElement('strong');
+  title.textContent = `${label}: No "show mac address-table" data found.`;
+  frag.appendChild(title);
+
+  if (parsed.commandsFound.length > 0) {
+    const found = document.createElement('div');
+    found.style.marginTop = '0.5em';
+    found.textContent = `Commands detected: ${parsed.commandsFound.join(', ')}`;
+    frag.appendChild(found);
+
+    const hint = document.createElement('div');
+    hint.style.marginTop = '0.25em';
+    hint.textContent = 'The input contains other show commands but is missing "show mac address-table" which is required for the comparison.';
+    frag.appendChild(hint);
+  } else if (parsed.hostname) {
+    const hint = document.createElement('div');
+    hint.style.marginTop = '0.5em';
+    hint.textContent = `Detected hostname "${parsed.hostname}" but no recognized show commands. Ensure the input includes "show mac address-table" output.`;
+    frag.appendChild(hint);
+  } else {
+    const hint = document.createElement('div');
+    hint.style.marginTop = '0.5em';
+    hint.textContent = 'Expected Cisco IOS or NX-OS "show mac address-table" output. Paste the full terminal output including the command prompt line.';
+    frag.appendChild(hint);
+  }
+
+  return frag;
+}
+
 // --- Audit table rendering ---
 
 function renderAuditTable(entries) {
@@ -388,11 +424,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (beforeParsed.macEntries.length === 0) {
-      showMessage('error', 'Could not parse any MAC entries from the Before input. Expected Cisco IOS or NX-OS show mac address-table output.');
+      showMessage('error', buildMissingMacError('Before', beforeParsed));
       return;
     }
     if (afterParsed.macEntries.length === 0) {
-      showMessage('error', 'Could not parse any MAC entries from the After input. Expected Cisco IOS or NX-OS show mac address-table output.');
+      showMessage('error', buildMissingMacError('After', afterParsed));
       return;
     }
 
