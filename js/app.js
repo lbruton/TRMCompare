@@ -7,7 +7,7 @@ import { exportToExcel, exportToPDF } from './export.js';
 let currentAuditEntries = null;
 let currentSortCol = null;
 let currentSortAsc = true;
-const activeFilters = new Set(['all', 'trunk', 'voice', 'access']);
+const activeFilters = new Set(['all', 'trunk', 'multi', 'voice', 'access']);
 
 const ISSUE_LABELS = {
   vlan: 'VLAN',
@@ -284,6 +284,7 @@ function applyFilters() {
   const showNew = activeFilters.has('new');
   const showMissing = activeFilters.has('missing');
   const showTrunk = activeFilters.has('trunk');
+  const showMulti = activeFilters.has('multi');
   const showVoice = activeFilters.has('voice');
   const showAccess = activeFilters.has('access');
 
@@ -302,6 +303,7 @@ function applyFilters() {
     // Port type filter
     let typeMatch = false;
     if (portType === 'trunk' && showTrunk) typeMatch = true;
+    else if (portType === 'multi' && showMulti) typeMatch = true;
     else if (portType === 'voice' && showVoice) typeMatch = true;
     else if ((portType === 'access' || !portType) && showAccess) typeMatch = true;
     if (issues === 'new' && showNew) typeMatch = true;
@@ -467,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentSortCol = null;
     currentSortAsc = true;
     activeFilters.clear();
-    ['all', 'trunk', 'voice', 'access'].forEach(f => activeFilters.add(f));
+    ['all', 'trunk', 'multi', 'voice', 'access'].forEach(f => activeFilters.add(f));
     updatePillStyles();
 
     renderAuditTable(currentAuditEntries);
@@ -497,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hasPortTags) {
       let msg;
       if (!hasVlanData) {
-        msg = 'Trunk/Voice labels are estimates based on MAC table density. Add "show vlan" and "show cdp neighbors" output for higher accuracy.';
+        msg = 'Multi/Voice labels are estimates based on MAC table density. "Multi" means multiple MACs seen — could be trunk, hypervisor, or AP. Add "show vlan" and "show cdp neighbors" output to confirm actual trunks.';
       } else {
         const layers = ['show vlan'];
         if (hasCdpData) layers.push('CDP neighbors');
@@ -547,6 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
           activeFilters.clear();
           activeFilters.add('all');
           activeFilters.add('trunk');
+          activeFilters.add('multi');
           activeFilters.add('voice');
           activeFilters.add('access');
         }
@@ -564,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           activeFilters.add(filter);
         }
-        const hasAll = activeFilters.has('trunk') && activeFilters.has('voice') && activeFilters.has('access');
+        const hasAll = activeFilters.has('trunk') && activeFilters.has('multi') && activeFilters.has('voice') && activeFilters.has('access');
         if (hasAll && !activeFilters.has('issues')) {
           activeFilters.add('all');
         } else {

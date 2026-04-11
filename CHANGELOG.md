@@ -3,6 +3,16 @@
 All notable changes to TRMCompare are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/). Versioned with git tags.
 
+## [1.2.0] - 2026-04-10
+
+### Changed
+- Heuristic port classifier returns `multi` (amber) instead of `trunk` (blue) when no `show vlan` evidence exists — reduces false trunk labels on hypervisor, Docker, and AP ports
+- `trunk` label now only applied with definitive `show vlan` data
+
+### Added
+- Amber "Multi" port tag and filter pill — distinct from blue "Trunk"
+- Updated disclaimer explaining multi vs trunk distinction
+
 ## [1.1.0] - 2026-04-04
 
 ### Fixed
