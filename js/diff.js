@@ -281,7 +281,7 @@ export function compareMacTables(before, after, portProfiles, enrichment) {
 /**
  * Build a MAC-keyed map: mac → { port, vlans: Set<number> }
  * Groups all VLAN appearances per MAC into one entry, picking the port from the first seen.
- * A MAC on a trunk/multi port will have multiple VLANs; on an access port, just one.
+ * A port classified as trunk/multi aggregates MACs across multiple VLANs; an access port has one.
  */
 function buildMacMap(entries) {
   const map = new Map();
