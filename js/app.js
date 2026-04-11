@@ -7,7 +7,8 @@ import { exportToExcel, exportToPDF } from './export.js';
 let currentAuditEntries = null;
 let currentSortCol = null;
 let currentSortAsc = true;
-const activeFilters = new Set(['all', 'trunk', 'voice', 'access']);
+const PORT_TYPES = ['trunk', 'multi', 'voice', 'access'];
+const activeFilters = new Set(['all', ...PORT_TYPES]);
 
 const ISSUE_LABELS = {
   vlan: 'VLAN',
@@ -125,7 +126,6 @@ function renderAuditTable(entries) {
     tr.dataset.newCdp = entry.new.cdp || '';
     tr.dataset.issues = entry.issues.join(',');
     tr.dataset.hasIssues = hasRealIssues || entry.issues.includes('new') || entry.issues.includes('missing') ? '1' : '0';
-    tr.dataset.portType = entry.old.type || entry.new.type || 'access';
 
     const fields = ['port', 'vlan', 'type', 'desc', 'cdp'];
     const mismatchFields = new Set(entry.issues);
@@ -284,6 +284,7 @@ function applyFilters() {
   const showNew = activeFilters.has('new');
   const showMissing = activeFilters.has('missing');
   const showTrunk = activeFilters.has('trunk');
+  const showMulti = activeFilters.has('multi');
   const showVoice = activeFilters.has('voice');
   const showAccess = activeFilters.has('access');
 
@@ -291,7 +292,8 @@ function applyFilters() {
     const textMatch = !term || row.textContent.toLowerCase().includes(term);
     const issues = row.dataset.issues;
     const hasIssues = row.dataset.hasIssues === '1';
-    const portType = row.dataset.portType;
+    const oldType = row.dataset.oldType || 'access';
+    const newType = row.dataset.newType || 'access';
 
     // Issues Only: hide OK rows
     if (issuesOnly && !hasIssues) {
@@ -299,11 +301,13 @@ function applyFilters() {
       continue;
     }
 
-    // Port type filter
+    // Port type filter — match if either old or new side matches an active filter
+    const typesOnRow = new Set([oldType, newType]);
     let typeMatch = false;
-    if (portType === 'trunk' && showTrunk) typeMatch = true;
-    else if (portType === 'voice' && showVoice) typeMatch = true;
-    else if ((portType === 'access' || !portType) && showAccess) typeMatch = true;
+    if (typesOnRow.has('trunk') && showTrunk) typeMatch = true;
+    else if (typesOnRow.has('multi') && showMulti) typeMatch = true;
+    else if (typesOnRow.has('voice') && showVoice) typeMatch = true;
+    else if ((typesOnRow.has('access')) && showAccess) typeMatch = true;
     if (issues === 'new' && showNew) typeMatch = true;
     if (issues === 'missing' && showMissing) typeMatch = true;
 
@@ -467,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentSortCol = null;
     currentSortAsc = true;
     activeFilters.clear();
-    ['all', 'trunk', 'voice', 'access'].forEach(f => activeFilters.add(f));
+    ['all', ...PORT_TYPES].forEach(f => activeFilters.add(f));
     updatePillStyles();
 
     renderAuditTable(currentAuditEntries);
@@ -488,7 +492,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Classification confidence disclaimer
-    const hasVlanData = beforeParsed.vlanData !== null || afterParsed.vlanData !== null;
+    const beforeHasVlan = beforeParsed.vlanData !== null;
+    const afterHasVlan = afterParsed.vlanData !== null;
+    const hasVlanData = beforeHasVlan || afterHasVlan;
+    const bothHaveVlan = beforeHasVlan && afterHasVlan;
     const hasCdpData = beforeParsed.cdpNeighbors !== null || afterParsed.cdpNeighbors !== null;
     const hasPortTags = currentAuditEntries.some(e =>
       (e.old.type && e.old.type !== 'access') || (e.new.type && e.new.type !== 'access')
@@ -497,11 +504,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hasPortTags) {
       let msg;
       if (!hasVlanData) {
-        msg = 'Trunk/Voice labels are estimates based on MAC table density. Add "show vlan" and "show cdp neighbors" output for higher accuracy.';
+        msg = 'Multi/Voice labels are estimates based on MAC table density. "Multi" means multiple MACs seen \u2014 could be trunk, hypervisor, or AP. Add "show vlan" and "show cdp neighbors" output to confirm actual trunks.';
       } else {
         const layers = ['show vlan'];
         if (hasCdpData) layers.push('CDP neighbors');
         msg = `Port classification verified with ${layers.join(' + ')}. Trunk = not in VLAN table. Voice = multi-VLAN access port${hasCdpData ? ' or CDP-confirmed phone' : ''}.`;
+        if (!bothHaveVlan) {
+          const side = beforeHasVlan ? 'new' : 'old';
+          msg += ` Note: ${side} switch paste lacks "show vlan" \u2014 its labels are heuristic estimates.`;
+        }
       }
       if (!disclaimer) {
         disclaimer = document.createElement('div');
@@ -545,10 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (filter === 'all') {
         if (!activeFilters.has('all')) {
           activeFilters.clear();
-          activeFilters.add('all');
-          activeFilters.add('trunk');
-          activeFilters.add('voice');
-          activeFilters.add('access');
+          ['all', ...PORT_TYPES].forEach(f => activeFilters.add(f));
         }
       } else if (filter === 'issues') {
         if (activeFilters.has('issues')) {
@@ -564,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           activeFilters.add(filter);
         }
-        const hasAll = activeFilters.has('trunk') && activeFilters.has('voice') && activeFilters.has('access');
+        const hasAll = PORT_TYPES.every(t => activeFilters.has(t));
         if (hasAll && !activeFilters.has('issues')) {
           activeFilters.add('all');
         } else {

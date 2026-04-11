@@ -18,15 +18,15 @@ export function buildLookupMap(entries) {
 
 /**
  * Classify ports using all available data layers.
- * Returns a Map<port, 'trunk'|'voice'|null>.
+ * Returns a Map<port, 'trunk'|'multi'|'voice'|null>.
  *
  * Layered classification (most confident wins):
  *
  * Layer 1 — MAC table heuristic (always available):
- *   - 3+ VLANs on one port → trunk
+ *   - 3+ VLANs on one port → multi (suspected trunk/uplink)
  *   - 2 VLANs, exactly 1 MAC per VLAN → voice (classic phone+PC pattern)
- *   - 2 VLANs, any VLAN has 2+ MACs → trunk
- *   - 1 VLAN, 2+ MACs → trunk (multiple devices behind an uplink)
+ *   - 2 VLANs, any VLAN has 2+ MACs → multi
+ *   - 1 VLAN, 2+ MACs → multi (multiple devices behind a port, e.g. hypervisor)
  *   - 1 MAC, 1 VLAN → null (access port)
  *
  * Layer 2 — show vlan (definitive access/trunk split):
@@ -119,7 +119,9 @@ function _classifyPortsDefinitive(entries, vlanPorts) {
   return result;
 }
 
-/** Original heuristic classification — internal helper */
+/** Original heuristic classification — internal helper.
+ *  Returns 'multi' (not 'trunk') because without show vlan/trunk data
+ *  we can't distinguish a real trunk from a hypervisor or AP port. */
 function _classifyPortsHeuristic(entries) {
   // Group by port: { macs: Set, vlans: Set, macsPerVlan: Map<vlan, count> }
   const portStats = new Map();
@@ -140,14 +142,14 @@ function _classifyPortsHeuristic(entries) {
     const macCount = stats.macs.size;
 
     if (vlanCount >= 3) {
-      result.set(port, 'trunk');
+      result.set(port, 'multi');
     } else if (vlanCount === 2) {
       // Classic voice: exactly 1 MAC per VLAN (phone + PC)
       const allSingle = [...stats.macsPerVlan.values()].every(c => c === 1);
-      result.set(port, allSingle ? 'voice' : 'trunk');
+      result.set(port, allSingle ? 'voice' : 'multi');
     } else if (macCount >= 2) {
-      // Single VLAN but multiple MACs → uplink/trunk
-      result.set(port, 'trunk');
+      // Single VLAN but multiple MACs → could be hypervisor, AP, or uplink
+      result.set(port, 'multi');
     } else {
       result.set(port, null);
     }
@@ -279,7 +281,7 @@ export function compareMacTables(before, after, portProfiles, enrichment) {
 /**
  * Build a MAC-keyed map: mac → { port, vlans: Set<number> }
  * Groups all VLAN appearances per MAC into one entry, picking the port from the first seen.
- * A MAC on a trunk will have multiple VLANs; on an access port, just one.
+ * A port classified as trunk/multi aggregates MACs across multiple VLANs; an access port has one.
  */
 function buildMacMap(entries) {
   const map = new Map();
