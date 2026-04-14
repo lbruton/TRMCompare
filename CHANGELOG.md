@@ -3,6 +3,12 @@
 All notable changes to TRMCompare are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/). Versioned with git tags.
 
+## [1.2.1] - 2026-04-13
+
+### Added
+
+- Cisco IOS syntax highlighting for Before/After textareas — hostname prompts, MAC addresses, IPs, interfaces, keywords, comments, and section banners (TRMC-8)
+
 ## [1.2.0] - 2026-04-10
 
 ### Changed
