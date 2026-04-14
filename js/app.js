@@ -3,6 +3,7 @@
 import { parseTerminalOutput } from './parser.js';
 import { classifyPorts, buildAuditEntries } from './diff.js';
 import { exportToExcel, exportToPDF } from './export.js';
+import { highlight, OverlayManager } from './syntax-highlight.js';
 
 let currentAuditEntries = null;
 let currentSortCol = null;
@@ -383,6 +384,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterInput = document.getElementById('filter-input');
   const exportExcelBtn = document.getElementById('export-excel-btn');
   const exportPdfBtn = document.getElementById('export-pdf-btn');
+
+  const beforeOverlay = new OverlayManager('before-input', 'before-overlay');
+  const afterOverlay = new OverlayManager('after-input', 'after-overlay');
+
+  function attachHighlighting(textarea, overlay) {
+    // Keep overlay always visible behind the textarea with transparent text
+    // so syntax highlighting is visible even during selection.
+    let rafId = null;
+
+    function render() {
+      rafId = null;
+      overlay.update(highlight(textarea.value));
+      overlay.show();
+      textarea.style.caretColor = 'var(--text-primary)';
+    }
+
+    render();
+
+    textarea.addEventListener('input', () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(render);
+      }
+    });
+    textarea.addEventListener('scroll', () => overlay.syncScroll());
+  }
+
+  attachHighlighting(beforeInput, beforeOverlay);
+  attachHighlighting(afterInput, afterOverlay);
 
   // Theme toggle
   const themeToggle = document.getElementById('theme-toggle');

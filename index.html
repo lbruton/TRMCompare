@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;600;700;800;900&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/syntax-highlight.css">
 </head>
 <body>
   <header>
@@ -81,6 +82,7 @@
 
 Captured before the swap. Supports multiple show commands,
 or just 'show mac address-table' output on its own."></textarea>
+        <pre id="before-overlay" class="syntax-overlay" aria-hidden="true"></pre>
       </div>
       <div class="input-panel">
         <label for="after-input">New Switch</label>
@@ -88,6 +90,7 @@ or just 'show mac address-table' output on its own."></textarea>
 
 Captured after the swap. The tool auto-detects
 IOS, IOS-XE, and NX-OS output formats."></textarea>
+        <pre id="after-overlay" class="syntax-overlay" aria-hidden="true"></pre>
       </div>
     </div>
 
