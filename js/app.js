@@ -3,6 +3,7 @@
 import { parseTerminalOutput } from './parser.js';
 import { classifyPorts, buildAuditEntries } from './diff.js';
 import { exportToExcel, exportToPDF } from './export.js';
+import { highlight, OverlayManager } from './syntax-highlight.js';
 
 let currentAuditEntries = null;
 let currentSortCol = null;
@@ -367,6 +368,9 @@ function setupFileDrop(textarea) {
     reader.onload = () => {
       textarea.value = reader.result;
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      if (document.activeElement !== textarea) {
+        textarea.dispatchEvent(new Event('blur'));
+      }
     };
     reader.onerror = () => { showMessage('error', 'Could not read file.'); };
     reader.readAsText(file);
@@ -383,6 +387,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterInput = document.getElementById('filter-input');
   const exportExcelBtn = document.getElementById('export-excel-btn');
   const exportPdfBtn = document.getElementById('export-pdf-btn');
+
+  const beforeOverlay = new OverlayManager('before-input', 'before-overlay');
+  const afterOverlay = new OverlayManager('after-input', 'after-overlay');
+
+  function attachHighlighting(textarea, overlay) {
+    // Keep overlay always visible behind the textarea with transparent text
+    // so syntax highlighting is visible even during selection.
+    overlay.update(highlight(textarea.value));
+    overlay.show();
+    textarea.style.color = 'transparent';
+    textarea.style.caretColor = 'var(--text-primary)';
+
+    textarea.addEventListener('input', () => {
+      overlay.update(highlight(textarea.value));
+    });
+    textarea.addEventListener('scroll', () => overlay.syncScroll());
+  }
+
+  attachHighlighting(beforeInput, beforeOverlay);
+  attachHighlighting(afterInput, afterOverlay);
 
   // Theme toggle
   const themeToggle = document.getElementById('theme-toggle');
