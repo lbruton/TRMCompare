@@ -13,8 +13,23 @@ const IPV4_RE = /\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/;
 const NUMBER_RE = /\b(\d+)\b/;
 
 // MAC addresses: Cisco format xxxx.xxxx.xxxx or xxxx.xxxx.xxxx.xxxx.
-// Explicit boundary checks avoid the finicky behaviour of \b with dot-separated hex.
-const MAC_ADDRESS_RE = /(?<![0-9a-zA-Z])([0-9a-fA-F]{4}(?:\.[0-9a-fA-F]{4}){2,3})(?![0-9a-zA-Z])/;
+// Manual boundary checks (no lookbehind) for Safari < 16.4 compatibility.
+function tryMacMatch(remaining) {
+  const re = /[0-9a-fA-F]{4}(?:\.[0-9a-fA-F]{4}){2,3}/g;
+  let m;
+  while ((m = re.exec(remaining)) !== null) {
+    const start = m.index;
+    const end = start + m[0].length;
+    const prevChar = remaining[start - 1];
+    const nextChar = remaining[end];
+    const prevOk = start === 0 || !/[0-9a-zA-Z]/.test(prevChar);
+    const nextOk = end >= remaining.length || !/[0-9a-zA-Z]/.test(nextChar);
+    if (prevOk && nextOk) {
+      return { index: start, length: m[0].length, className: 'mac-address', text: m[0] };
+    }
+  }
+  return null;
+}
 
 // Expanded interface names.
 const INTERFACE_NAME_RE = /\b((?:Port-channel|Loopback|Gi|Te|Fa|Eth|Tunnel|Serial|Vlan|Lo|Po)\S*)\b/;
@@ -30,7 +45,8 @@ const CLI_KEYWORDS = [
 ];
 
 const KEYWORD_RE = new RegExp(
-  '\\b(' + CLI_KEYWORDS.map(k => k.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|') + ')\\b'
+  '\\b(' + CLI_KEYWORDS.map(k => k.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|') + ')\\b',
+  'i'
 );
 
 // ------------------------------------------------------------------
@@ -62,7 +78,10 @@ function tokenizeCli(remaining) {
       }
     }
 
-    tryMatch(MAC_ADDRESS_RE, 'mac-address');
+    const macMatch = tryMacMatch(remaining);
+    if (macMatch && (best === null || macMatch.index < best.index)) {
+      best = macMatch;
+    }
     tryMatch(IPV4_RE, 'ip-address');
     tryMatch(INTERFACE_NAME_RE, 'interface');
     tryMatch(KEYWORD_RE, 'keyword');
@@ -165,13 +184,16 @@ export class OverlayManager {
   show() {
     this.syncStyles();
     this.overlay.style.visibility = 'visible';
-    this.overlay.style.zIndex = '10';
-    this.textarea.style.zIndex = '1';
+    this.overlay.style.zIndex = '1';
+    this.textarea.style.position = 'relative';
+    this.textarea.style.zIndex = '2';
     this.textarea.style.color = 'transparent';
   }
 
   hide() {
     this.overlay.style.visibility = 'hidden';
+    this.textarea.style.position = '';
+    this.textarea.style.zIndex = '';
     this.textarea.style.color = '';
   }
 
@@ -200,6 +222,11 @@ export class OverlayManager {
     overlay.style.width = styles.width;
     overlay.style.height = styles.height;
     overlay.style.boxSizing = styles.boxSizing;
+    overlay.style.whiteSpace = styles.whiteSpace;
+    overlay.style.overflowWrap = styles.overflowWrap || styles.wordWrap;
+    overlay.style.textAlign = styles.textAlign;
+    overlay.style.letterSpacing = styles.letterSpacing;
+    overlay.style.textTransform = styles.textTransform;
   }
 
   syncScroll() {

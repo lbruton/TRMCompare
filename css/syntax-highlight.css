@@ -51,7 +51,7 @@
   z-index: 2;
   background: transparent;
   overflow: auto;
-  white-space: pre;
-  word-wrap: normal;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
   resize: none;
 }

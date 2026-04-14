@@ -368,9 +368,6 @@ function setupFileDrop(textarea) {
     reader.onload = () => {
       textarea.value = reader.result;
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
-      if (document.activeElement !== textarea) {
-        textarea.dispatchEvent(new Event('blur'));
-      }
     };
     reader.onerror = () => { showMessage('error', 'Could not read file.'); };
     reader.readAsText(file);
@@ -394,13 +391,21 @@ document.addEventListener('DOMContentLoaded', () => {
   function attachHighlighting(textarea, overlay) {
     // Keep overlay always visible behind the textarea with transparent text
     // so syntax highlighting is visible even during selection.
-    overlay.update(highlight(textarea.value));
-    overlay.show();
-    textarea.style.color = 'transparent';
-    textarea.style.caretColor = 'var(--text-primary)';
+    let rafId = null;
+
+    function render() {
+      rafId = null;
+      overlay.update(highlight(textarea.value));
+      overlay.show();
+      textarea.style.caretColor = 'var(--text-primary)';
+    }
+
+    render();
 
     textarea.addEventListener('input', () => {
-      overlay.update(highlight(textarea.value));
+      if (rafId === null) {
+        rafId = requestAnimationFrame(render);
+      }
     });
     textarea.addEventListener('scroll', () => overlay.syncScroll());
   }
