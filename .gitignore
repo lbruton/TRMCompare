@@ -2,13 +2,17 @@
 .DS_Store
 
 # AI tooling (backed up via /backup-claude to Nextcloud)
-.claude/
+# Root-level CLAUDE.md / AGENTS.md / GEMINI.md ARE tracked — they describe the project.
+# Only the tool-specific config dirs stay local.
+.claude/*
+!.claude/project.json
 .agents/
+.gemini/
+.codex/
+.kimi/
+.opencode/
 .specflow/
 .codacy.yml
-CLAUDE.md
-AGENTS.md
-GEMINI.md
 
 # Test infrastructure
 node_modules/
